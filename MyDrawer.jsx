@@ -1,121 +1,147 @@
-import * as React from 'react';
-import { View, Text, Button, Image, StyleSheet, Pressable } from 'react-native';
-import { createDrawerNavigator, DrawerContentScrollView } from '@react-navigation/drawer';
-import { NavigationContainer } from '@react-navigation/native';
+import React, {useContext} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Pressable,
+  TouchableOpacity,
+} from 'react-native';
+import {
+  createDrawerNavigator,
+  DrawerContentScrollView,
+} from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import Dashboard from './src/screens/DashboardScreen';
+import ThemeContext from './src/theme/ThemeContext';
 import LinearGradient from 'react-native-linear-gradient';
 
-// Create the drawer navigator
 const Drawer = createDrawerNavigator();
 
-// Custom Drawer Component
-const CustomDrawerContent = (props) => {
+const CustomDrawerContent = props => {
+  const {colors, theme, toggleTheme} = useContext(ThemeContext);
   const menuItems = [
-    { name: 'Home', icon: 'home', screen: 'Home' },
-    { name: 'Profile', icon: 'person', screen: 'Profile' },
-    { name: 'Messages', icon: 'message', screen: 'Messages' },
-    { name: 'Favorites', icon: 'favorite', screen: 'Favorites' },
-    { name: 'Settings', icon: 'settings', screen: 'Settings' },
+    {name: 'Bookings', icon: 'groups', screen: 'Bookings'},
+    {name: 'Map', icon: 'map', screen: 'Map'},
+    {name: 'Booking History', icon: 'history', screen: 'Completed'},
+    {name: 'QR Code', icon: 'qr-code', screen: 'QRScanner'},
+  ];
+
+  const footerItems = [
+    {name: 'FAQs', icon: 'help-outline', screen: 'FAQs'},
+    {name: 'App Feedback', icon: 'feedback', screen: 'Feedback'},
+    {name: 'Rate the app', icon: 'star-rate', screen: 'RateApp'},
+    {name: 'Terms of Usage', icon: 'article', screen: 'Terms'},
   ];
 
   return (
-    <View style={styles.drawerContainer}>
-      <LinearGradient
-        colors={['#6C63FF', '#4A47A3']}
-        style={styles.drawerHeader}
+    <LinearGradient
+      colors={colors.sidePanelBgColors}
+      style={styles.drawerContainer}
+    >
+      {/* Header Section */}
+      <View style={styles.drawerHeader}>
+        <TouchableOpacity style={styles.iconButton} onPress={() => props.navigation.navigate('Profile')}>
+          <Icon name="account-circle" size={30} color="#fff" />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.iconButton} onPress={() => props.navigation.closeDrawer()}>
+          <Icon name="close" size={30} color="#fff" />
+        </TouchableOpacity>
+      </View>
+      {/* Menu Items */}
+      <DrawerContentScrollView
+        {...props}
+        contentContainerStyle={{gap: 15}}
       >
-        <Image
-          source={{ uri: 'https://avatars.githubusercontent.com/u/185829049?v=4' }}
-          style={styles.profileImage}
-        />
-        <Text style={styles.profileName}>Happy Chauhan</Text>
-        <Text style={styles.profileEmail}>happychauhan@flash.co</Text>
-      </LinearGradient>
+      
+      <Text style={styles.title}>PwC WorkInSync</Text>
 
-      <DrawerContentScrollView {...props}>
-        {menuItems.map((item) => (
+      
+        {menuItems.map(item => (
           <Pressable
             key={item.screen}
-            style={({ pressed }) => [
-              styles.menuItem,
-              pressed && { backgroundColor: '#00000010' },
-              props.state.index === props.state.routes.findIndex(
-                (route) => route.name === item.screen
-              ) && styles.activeMenuItem
-            ]}
+            style={styles.menuItem}
             onPress={() => props.navigation.navigate(item.screen)}
           >
-            <Icon name={item.icon} size={24} color="#333" />
+            <Icon name={item.icon} size={24} color="#fff" />
             <Text style={styles.menuText}>{item.name}</Text>
           </Pressable>
         ))}
-      </DrawerContentScrollView>
 
-      <View style={styles.footer}>
-        <Pressable style={styles.footerItem}>
-          <Icon name="info" size={20} color="#666" />
-          <Text style={styles.footerText}>About</Text>
-        </Pressable>
-        <Pressable style={styles.footerItem}>
-          <Icon name="logout" size={20} color="#666" />
-          <Text style={styles.footerText}>Logout</Text>
-        </Pressable>
+        <View style={styles.divider} />
+        {footerItems.map(item => (
+          <Pressable
+            key={item.screen}
+            style={styles.menuItem}
+            onPress={() => props.navigation.navigate(item.screen)}
+          >
+            <Icon name={item.icon} size={22} color="#ccc" />
+            <Text style={styles.menuText}>{item.name}</Text>
+          </Pressable>
+        ))}
+      
+      <View style={styles.divider} />
+      {/* Logout Button */}
+      <Pressable
+        style={styles.menuItem}
+        onPress={() => console.log('Logging out')}
+      >
+        <Icon name="logout" size={24} color="#fff" />
+        <Text style={styles.menuText}>Logout</Text>
+      </Pressable>
+      <View style={styles.menuItem}>
+        <View style={[styles.iconContainer]}>
+          <Icon name="color-lens" size={30} color="white" />
+        </View>
+        <Text style={styles.menuText}>Theme</Text>
+        <TouchableOpacity
+          style={{
+            backgroundColor: 'gray',
+            width: 50,
+            height: 15,
+            alignItems: 'center',
+            borderRadius: 20,
+            flexDirection: 'row',
+            justifyContent: `${theme === 'dark' ? 'flex-end' : 'flex-start'}`,
+          }}
+          onPress={toggleTheme}
+        >
+          <View
+            style={{
+              height: 20,
+              width: 20,
+              borderRadius: 20,
+              backgroundColor: `${theme === 'dark' ? 'white' : 'black'}`,
+            }}
+          ></View>
+        </TouchableOpacity>
       </View>
-    </View>
+      </DrawerContentScrollView>
+    </LinearGradient>
   );
 };
 
-// Screen Components
-const HomeScreen = ({ navigation }) => (
-  <View style={styles.screenContainer}>
-    <Text style={styles.screenTitle}>Home Screen</Text>
-    <Button title="Open Drawer" onPress={() => navigation.openDrawer()} />
-  </View>
-);
-
-const SettingsScreen = () => (
-  <View style={styles.screenContainer}>
-    <Text style={styles.screenTitle}>Settings Screen</Text>
-  </View>
-);
-
-const ProfileScreen = () => (
-  <View style={styles.screenContainer}>
-    <Text style={styles.screenTitle}>Profile Screen</Text>
-  </View>
-);
-
-const MessagesScreen = () => (
-  <View style={styles.screenContainer}>
-    <Text style={styles.screenTitle}>Messages Screen</Text>
-  </View>
-);
-
-const FavoritesScreen = () => (
-  <View style={styles.screenContainer}>
-    <Text style={styles.screenTitle}>Favorites Screen</Text>
-  </View>
-);
-
-// Main Navigator
 const MyDrawer = () => {
   return (
-      <Drawer.Navigator
-        drawerContent={(props) => <CustomDrawerContent {...props} />}
-        screenOptions={{
-          headerShown: true,
-          drawerType: 'slide',
-          drawerStyle: {
-            width: '75%',
-          },
-        }}
-      >
-        <Drawer.Screen name="Home" component={HomeScreen} />
-        <Drawer.Screen name="Profile" component={ProfileScreen} />
-        <Drawer.Screen name="Messages" component={MessagesScreen} />
-        <Drawer.Screen name="Favorites" component={FavoritesScreen} />
-        <Drawer.Screen name="Settings" component={SettingsScreen} />
-      </Drawer.Navigator>
+    <Drawer.Navigator
+      drawerContent={props => <CustomDrawerContent {...props} />}
+      screenOptions={{
+        headerShown: false,
+        drawerType: 'slide',
+        drawerStyle: {
+          width: '100%',
+          backgroundColor: '#1E1E1E',
+        },
+      }}
+    >
+      <Drawer.Screen name="Home" component={Dashboard} />
+      {/* <Drawer.Screen name="Map" component={ScreenComponent} />
+        <Drawer.Screen name="BookingHistory" component={ScreenComponent} />
+        <Drawer.Screen name="QRCode" component={ScreenComponent} />
+        <Drawer.Screen name="FAQs" component={ScreenComponent} />
+        <Drawer.Screen name="Feedback" component={ScreenComponent} />
+        <Drawer.Screen name="RateApp" component={ScreenComponent} />
+        <Drawer.Screen name="Terms" component={ScreenComponent} /> */}
+    </Drawer.Navigator>
   );
 };
 
@@ -123,72 +149,74 @@ const MyDrawer = () => {
 const styles = StyleSheet.create({
   drawerContainer: {
     flex: 1,
-    backgroundColor: '#fff',
+    padding: 20,
+    backgroundColor: '#121212',
   },
   drawerHeader: {
-    padding: 20,
-    paddingTop: 40,
-    paddingBottom: 30,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    paddingHorizontal: 10,
   },
-  profileImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginBottom: 15,
-    borderWidth: 2,
-    borderColor: '#fff',
+  iconButton: {
+    width: 50,
+    height: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 50,
+    marginTop: Platform.OS === 'ios' ? 40 : 1, // Adjust margin for iOS
+    backgroundColor: '#1D2B34',
+    // Shadow for iOS
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 2},
+    shadowOpacity: 0.8,
+    shadowRadius: 4,
+    // Elevation for Android
+    elevation: 5,
+    marginBottom: 20,
   },
-  profileName: {
-    color: '#fff',
+  title: {
     fontSize: 20,
     fontWeight: 'bold',
-  },
-  profileEmail: {
-    color: '#ffffffdd',
-    fontSize: 14,
+    marginBottom: 30,
+    color: 'white',
+    borderBottomWidth: 1,
+    borderBottomColor: 'white',
+    paddingBottom: 10,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 15,
-    paddingHorizontal: 20,
-  },
-  activeMenuItem: {
-    backgroundColor: '#6C63FF20',
-    borderLeftWidth: 4,
-    borderLeftColor: '#6C63FF',
+    gap: 15,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    marginVertical: 1,
+    borderRadius: 5,
+    width: 'auto',
+    paddingBottom: 1,
   },
   menuText: {
-    fontSize: 16,
-    marginLeft: 20,
-    color: '#333',
+    fontSize: 15,
+    color: 'white',
+    fontWeight: 500,
   },
-  footer: {
+  divider: {
+    height: 1,
+    backgroundColor: 'white',
+    marginVertical: 10,
+  },
+  logout: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingTop:20,
     borderTopWidth: 1,
-    borderTopColor: '#ddd',
-    padding: 20,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    borderTopColor: 'white',
   },
-  footerItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  footerText: {
+  logoutText: {
     marginLeft: 10,
-    color: '#666',
-  },
-  screenContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#f5f5f5',
-  },
-  screenTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#333',
+    color: '#fff',
+    fontSize: 16,
   },
 });
 

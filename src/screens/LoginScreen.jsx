@@ -148,7 +148,7 @@ const styles = StyleSheet.create({
         paddingVertical: 5,
     },
     inputContainer: {
-        width: 310,
+        width: '100%',
         marginVertical: 10,
         borderRadius: 10,
         paddingVertical: 4,

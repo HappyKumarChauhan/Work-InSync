@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     },
     inputContainer: {
         backgroundColor: 'white',
-        width: 310,
+        width:'100%',
         marginVertical: 10,
         borderRadius: 10,
         paddingVertical: 2,

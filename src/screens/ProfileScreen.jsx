@@ -50,16 +50,37 @@ const ProfileScreen = ({navigation}) => {
   const requestPermissions = async () => {
     if (Platform.OS === 'android') {
       const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES,
+        PermissionsAndroid.PERMISSIONS.READ_MEDIA_IMAGES
       );
+  
       if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
         Alert.alert(
           'Permission Denied',
-          'You need to grant storage permission to select images.',
+          'You need to grant storage permission to select images.'
+        );
+        return false;
+      }
+    } else if (Platform.OS === 'ios') {
+      const photoPermission = await request(PERMISSIONS.IOS.PHOTO_LIBRARY);
+      const cameraPermission = await request(PERMISSIONS.IOS.CAMERA);
+  
+      if (photoPermission !== RESULTS.GRANTED) {
+        Alert.alert(
+          'Permission Denied',
+          'You need to grant photo library access to select images.'
+        );
+        return false;
+      }
+  
+      if (cameraPermission !== RESULTS.GRANTED) {
+        Alert.alert(
+          'Permission Denied',
+          'You need to grant camera access to take pictures.'
         );
         return false;
       }
     }
+  
     return true;
   };
 

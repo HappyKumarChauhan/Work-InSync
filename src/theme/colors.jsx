@@ -11,6 +11,8 @@ export const lightTheme = {
     buttonBg:'black',
     buttonText:'white',
     background: '#FFFFFF',
+    iconTwo : '#1D2B34',
+    qrBorder : '#D3D3D3',
   };
   
   export const darkTheme = {
@@ -26,5 +28,7 @@ export const lightTheme = {
     buttonBg:'#f3f3f3',
     buttonText:'black',
     background: '#121212',
+    iconTwo : '#2f2f2f',
+    qrBorder : '#2f2f2f',
   };
   

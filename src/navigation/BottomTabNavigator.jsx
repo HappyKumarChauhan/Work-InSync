@@ -7,6 +7,7 @@ import ProfileScreen from '../screens/ProfileScreen';
 import ThemeContext from '../theme/ThemeContext';
 import { useContext } from 'react';
 import MyDrawer from '../../MyDrawer';
+import QRCodeScreen from '../screens/QrCodeScreen';
 const Tab = createBottomTabNavigator();
 function MyTabs() {
   const { colors} = useContext(ThemeContext)
@@ -48,7 +49,7 @@ function MyTabs() {
     />
     <Tab.Screen
       name="QrCodeScanner"
-      component={Dashboard} // Custom component for the screen
+      component={QRCodeScreen} // Custom component for the screen
       options={{
         tabBarIcon: ({ color, size }) => (
           <Icon name="qr-code-scanner" size={30} color="white" />

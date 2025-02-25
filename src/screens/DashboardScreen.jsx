@@ -10,7 +10,8 @@ import {
   Animated,
   PanResponder,
   Image,
-  SafeAreaView
+  SafeAreaView,
+  KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard
 } from 'react-native';
 import MenuScreen from './MenuScreen';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -84,6 +85,11 @@ const Dashboard = ({ navigation }) => {
   });
 
   return (
+    <KeyboardAvoidingView
+    behavior={Platform.OS === 'ios' ? 'padding' : null}
+    style={{ flex: 1 }}
+  >
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
     <ImageBackground
       source={{ uri: 'https://s3-alpha-sig.figma.com/img/0abf/9d1c/32df1966e2ce33e9f7138b85ab0dcecc?Expires=1739750400&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=A1kNQe9mj62FyClMtjrdrFkS8CU4eKi4RzSy2oDq~iFlLLExGlBfu~3o7HbcrOzrQKxlItZWhFgdaZS84~wWtJwJhHz8hzn8Mei51zJQHgR7DFZKhMou9ArZBDQ5~QTaWhEKcLR~cgjqOAnLcdlZVNBk2Uoh8bNPDnXbRwsx8yOC~f~QrePRsdwF4JjINBdeVsOI~wjB0gm26DZ1RIl9xhHnP1FWfTDU16lYYKJ2VbX5mgFu6FMM1m0AU0az9RgwEMN5n8Ip-qo7EeCcORo6KuddFesoYQ8ztV120uFIdNAXFQ5oPmAI4gLouaM8nL09AR7mYSluVLMC-pNrwG0PZg__' }}
       style={styles.background}
@@ -133,14 +139,15 @@ const Dashboard = ({ navigation }) => {
 
 
               {/* Other Scrollable Content */}
-              <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+              <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent} keyboardShouldPersistTaps="handled"
+                keyboardDismissMode="on-drag">
               <View style={styles.otherContent}>
                 {/* Any other scrollable content goes here */}
                 {Array.from({length:8}).map((_,index)=>(<LinearGradient key={index} colors={colors.cardBgColors} style={styles.card}>
                   <Image
                     style={styles.cardImage}
                     source={{
-                      uri: 'https://s3-alpha-sig.figma.com/img/0404/f946/26a4a2e1c0b5a85c6e08dc70b45bde20?Expires=1739750400&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=TMDsE5eU3O9iUAJzhEBfpjIRTY2lbkTet6Gu2tWyQOMoVN61h2mMB36g6wklJB5e24ZBPm9ky5eT6Tg6ed2XVho-5j5rZAWr3PiAZgJv4E8iSovFmqT-m0DD-DsPXVOYLTjEMV7z5VDHadYJ-B717N5w3p3ckkmhw8aobUFnCla~wlQBwQx2YaSGhHlasAgueSnHHPw61HVYw3IiWSuz3VG7-S6otOkuda4BuzOFnVpPZfVEabFHS8fkz04Ypmeq9C51N-70quLH85wQopdC~77Uo178TyjsSh3iEcD7aQmJX9KAcUcgE~2oiCMBujZeRQEYDLJi116U4NqGIjqIog__',
+                      uri: 'https://s3-alpha-sig.figma.com/img/0404/f946/26a4a2e1c0b5a85c6e08dc70b45bde20?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Cv7SwThHtmKs6kAvmFlFYie6JTOqZsGdvogIKpfAgMkHaTJ9y6XgYlD7P-PjwqND-m~sQEz9N8tDyWxxLInxeolLTYNpTPUkutN-NpCFih-AT9PxTFju3Dh1mZzI7evtvf5cipkgEcrH0lfo7fY8ATAFG-d3SkP7mUpDmdkhkf~m1QDKwqE0NUQHnVzW03UlWdGsbvH9b8EO8WWyQz9KjF-xTPDqIlpphCtDCoKFQDxDVlGKub4JluWtRnNJwA29gpGX-ZWkutHxz6sqVX5Epvp~z-YyKbk-MKRr7u1i1K6q0xGJP~0HcAuytbbEFtAIdsWFupCTim-ga-Esf-6W0Q__',
                     }}
                   />
                   <View style={styles.cardContent}>
@@ -159,6 +166,8 @@ const Dashboard = ({ navigation }) => {
         </SafeAreaView>
       </View>
     </ImageBackground>
+    </TouchableWithoutFeedback>
+    </KeyboardAvoidingView>
   );
 };
 

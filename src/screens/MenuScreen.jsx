@@ -54,7 +54,7 @@ const MenuScreen = ({ navigation, collapseSideBar }) => {
         },
     ];
     return (
-        <ScrollView style={{ flex: 1 }}>
+        <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
             <LinearGradient colors={colors.sidePanelBgColors} style={styles.container}>
                 {/* Top Row with Profile and Close Icons */}
                 <View style={styles.topIcons}>

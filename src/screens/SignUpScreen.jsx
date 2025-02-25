@@ -71,41 +71,41 @@ const SignUpScreen = ({ navigation }) => {
                 </View>
                 <View style={[styles.main, { backgroundColor: colors.background }]}>
                     <Text style={[styles.title, { color: colors.color }]}>Sign Up</Text>
-                    <View style={styles.inputContainer}>
-                        <Icon name="person-outline" size={30} color="black" />
+                    <View style={[styles.inputContainer,{ backgroundColor: colors.secondaryBg }]}>
+                        <Icon name="person-outline" size={30} color={colors.color} />
                         <TextInput
-                            style={styles.input}
-                            placeholderTextColor="#606060"
+                            style={[styles.input, { color: colors.color }]}
+                            placeholderTextColor={colors.secondaryColor}
                             placeholder="Name"
                             value={formData.name}
                             onChangeText={(text) => handleInputChange('name', text)}
                         />
                     </View>
-                    <View style={styles.inputContainer}>
-                        <Icon name="mail" size={30} color="black" />
+                    <View style={[styles.inputContainer,{ backgroundColor: colors.secondaryBg }]}>
+                        <Icon name="mail" size={30} color={colors.color} />
                         <TextInput
-                            style={styles.input}
-                            placeholderTextColor="#606060"
+                            style={[styles.input, { color: colors.color }]}
+                            placeholderTextColor={colors.secondaryColor}
                             placeholder="Email"
                             value={formData.email}
                             onChangeText={(text) => handleInputChange('email', text)}
                         />
                     </View>
-                    <View style={styles.inputContainer}>
-                        <Icon name="phone" size={30} color="black" />
+                    <View style={[styles.inputContainer,{ backgroundColor: colors.secondaryBg }]}>
+                        <Icon name="phone" size={30} color={colors.color} />
                         <TextInput
-                            style={styles.input}
-                            placeholderTextColor="#606060"
+                            style={[styles.input, { color: colors.color }]}
+                            placeholderTextColor={colors.secondaryColor}
                             placeholder="Phone"
                             value={formData.phoneNumber}
                             onChangeText={(text) => handleInputChange('phoneNumber', text)}
                         />
                     </View>
-                    <View style={styles.inputContainer}>
-                        <Icon name="lock" size={30} color="black" />
+                    <View style={[styles.inputContainer,{ backgroundColor: colors.secondaryBg }]}>
+                        <Icon name="lock" size={30} color={colors.color} />
                         <TextInput
-                            style={styles.input}
-                            placeholderTextColor="#606060"
+                            style={[styles.input, { color: colors.color }]}
+                            placeholderTextColor={colors.secondaryColor}
                             placeholder="Password"
                             secureTextEntry={!showPassword} // Toggle password visibility
                             value={formData.password}
@@ -118,7 +118,7 @@ const SignUpScreen = ({ navigation }) => {
                             <Icon
                                 name={showPassword ? "visibility" : "visibility-off"}
                                 size={24}
-                                color="black"
+                                color={colors.color}
                             />
                         </TouchableOpacity>
                     </View>

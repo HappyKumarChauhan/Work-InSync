@@ -235,7 +235,8 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     marginVertical: 20,
     paddingHorizontal: 20,
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
+    flexWrap: 'wrap'
   },
   dateSummaryItem: {
     borderBottomColor: 'white',
@@ -301,7 +302,6 @@ const styles = StyleSheet.create({
   },
   bookButton: {
     backgroundColor: 'black',
-    paddingVertical: 15,
     marginHorizontal: 'auto',
     borderRadius: 10,
     alignItems: 'center',

@@ -16,13 +16,15 @@ import axios from '../config/axios';
 import LoadingModal from '../components/LoadingModal';
 import LinearGradient from 'react-native-linear-gradient';
 
-const UserSignUpScreen = ({navigation}) => {
+const UserSignUpScreen = ({navigation,route}) => {
+  const {role}=route.params;
   const {colors} = useContext(ThemeContext);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phoneNumber: '',
     password: '',
+    role: role,
   });
 
   const [loading, setLoading] = useState(false);
@@ -93,7 +95,7 @@ const UserSignUpScreen = ({navigation}) => {
         </View>
         <LinearGradient colors={colors.bgGradient} style={[styles.main]}>
           <Text style={[styles.title, {color: colors.color}]}>
-            Normal User Registration
+            {role==='Normal'?'Normal User ':'Property Owner '}Registration
           </Text>
           <View
             style={[

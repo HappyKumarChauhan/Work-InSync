@@ -1,15 +1,14 @@
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import BookingsScreen from '../user/screens/Booking/BookingScreen';
 import Dashboard from '../screens/DashboardScreen';
-import RoomSpaceScreen from '../user/screens/Booking/RoomSpaceScreen';
-import ProfileScreen from '../screens/ProfileScreen';
-import ThemeContext from '../theme/ThemeContext';
+import BookingsScreen from '../screens/Booking/BookingScreen';
+import RoomSpaceScreen from '../screens/Booking/RoomSpaceScreen';
+import ProfileScreen from '../../screens/ProfileScreen';
+import QRCodeScreen from '../../screens/QrCodeScreen';
+import ThemeContext from '../../theme/ThemeContext';
 import { useContext } from 'react';
-import MyDrawer from './MyDrawer';
-import QRCodeScreen from '../screens/QrCodeScreen';
 const Tab = createBottomTabNavigator();
-function MyTabs() {
+function UserTabs() {
   const { colors} = useContext(ThemeContext)
   return (
 
@@ -31,7 +30,7 @@ function MyTabs() {
   >
     <Tab.Screen
       name="Home"
-      component={MyDrawer}
+      component={Dashboard}
       options={{
         tabBarIcon: ({ color, size }) => (
           <Icon name="home" size={30} color={color} />
@@ -80,4 +79,4 @@ function MyTabs() {
 
   );
 }
-export default MyTabs;
+export default UserTabs;

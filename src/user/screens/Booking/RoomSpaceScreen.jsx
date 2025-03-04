@@ -1,8 +1,8 @@
 import React, { useContext, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView,Linking } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import ThemeContext from '../../theme/ThemeContext';
-import Header from '../../components/Header';
+import ThemeContext from '../../../theme/ThemeContext';
+import Header from '../../../components/Header';
 
 
 const RoomSpaceScreen = ({ navigation }) => {

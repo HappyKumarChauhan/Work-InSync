@@ -188,7 +188,7 @@ const ProfileScreen = ({navigation}) => {
         {/* KYC Details Section */}
         <TouchableOpacity
           style={[styles.settingsOption, {backgroundColor: colors.secondaryBg}]}
-          onPress={() => navigation.navigate('KYCDetails')}
+          onPress={() => navigation.navigate('KYC')}
         >
           <View style={styles.settingsOptionContent}>
             <Icon name="verified" size={24} color={colors.color} />

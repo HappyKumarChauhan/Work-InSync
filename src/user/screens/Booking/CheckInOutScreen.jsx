@@ -3,8 +3,8 @@ import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Pla
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { Calendar } from 'react-native-calendars';
 import { TextInput } from 'react-native-gesture-handler';
-import ThemeContext from '../../theme/ThemeContext';
-import Header from '../../components/Header';
+import ThemeContext from '../../../theme/ThemeContext';
+import Header from '../../../components/Header';
 
 
 
@@ -42,7 +42,7 @@ const CheckInOutScreen = ({ navigation }) => {
 
   // Navigate to the DetailsScreen
   const handleBooking = () => {
-    navigation.navigate('DetailsScreen', {
+    navigation.navigate('Details', {
       startDate: selectedStartDate,
       endDate: selectedEndDate,
       guests: numberOfGuests,

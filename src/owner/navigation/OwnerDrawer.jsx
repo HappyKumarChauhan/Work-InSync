@@ -11,9 +11,11 @@ import {
   DrawerContentScrollView,
 } from '@react-navigation/drawer';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import Dashboard from './src/screens/DashboardScreen';
-import ThemeContext from './src/theme/ThemeContext';
+import ThemeContext from '../../theme/ThemeContext';
 import LinearGradient from 'react-native-linear-gradient';
+import OwnerTabs from './OwnerTabs';
+import PropertyDetailsScreen from '../screens/PropertyDetailsScreen';
+import UploadScreen from '../screens/UploadScreen';
 
 const Drawer = createDrawerNavigator();
 
@@ -40,10 +42,10 @@ const CustomDrawerContent = props => {
     >
       {/* Header Section */}
       <View style={styles.drawerHeader}>
-        <TouchableOpacity style={styles.iconButton} onPress={() => props.navigation.navigate('Profile')}>
+        <TouchableOpacity style={[styles.iconButton,{backgroundColor:colors.iconSecondary}]} onPress={() => props.navigation.navigate('Profile')}>
           <Icon name="account-circle" size={30} color="#fff" />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.iconButton} onPress={() => props.navigation.closeDrawer()}>
+        <TouchableOpacity style={[styles.iconButton,{backgroundColor:colors.iconSecondary}]} onPress={() => props.navigation.closeDrawer()}>
           <Icon name="close" size={30} color="#fff" />
         </TouchableOpacity>
       </View>
@@ -120,7 +122,7 @@ const CustomDrawerContent = props => {
   );
 };
 
-const MyDrawer = () => {
+const OwnerDrawer = () => {
   return (
     <Drawer.Navigator
       drawerContent={props => <CustomDrawerContent {...props} />}
@@ -133,14 +135,10 @@ const MyDrawer = () => {
         },
       }}
     >
-      <Drawer.Screen name="Home" component={Dashboard} />
-      {/* <Drawer.Screen name="Map" component={ScreenComponent} />
-        <Drawer.Screen name="BookingHistory" component={ScreenComponent} />
-        <Drawer.Screen name="QRCode" component={ScreenComponent} />
-        <Drawer.Screen name="FAQs" component={ScreenComponent} />
-        <Drawer.Screen name="Feedback" component={ScreenComponent} />
-        <Drawer.Screen name="RateApp" component={ScreenComponent} />
-        <Drawer.Screen name="Terms" component={ScreenComponent} /> */}
+      <Drawer.Screen name="Home" component={OwnerTabs} />
+      <Drawer.Screen name="PropertyDetails" component={PropertyDetailsScreen} />
+      <Drawer.Screen name="UploadScreen" component={UploadScreen} />
+      
     </Drawer.Navigator>
   );
 };
@@ -220,4 +218,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MyDrawer;
+export default OwnerDrawer;

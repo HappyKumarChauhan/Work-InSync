@@ -16,7 +16,7 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { ScrollView } from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
-import ThemeContext from '../theme/ThemeContext';
+import ThemeContext from '../../theme/ThemeContext';
 
 
 const Dashboard = ({ navigation }) => {

@@ -11,11 +11,46 @@ const KYCDetailsScreen = ({ navigation }) => {
     const [cameraMode, setCameraMode] = useState('selfie'); // 'selfie' or 'id_card'
     const [capturedSelfie, setCapturedSelfie] = useState(null);
     const [capturedIdCard, setCapturedIdCard] = useState(null);
+    const idTypes=['Aadhar Card','Pan Card','Driving License']
+    const [selectedIdType, setSelectedIdType] = useState(idTypes[0])
+    const [loading, setLoading] = useState(false)
     const handleCapture = (photo, mode) => {
         if (mode === 'selfie') {
             setCapturedSelfie(photo);
         } else {
             setCapturedIdCard(photo);
+        }
+    };
+    const handleKYCSubmission = async () => {
+        if (!capturedSelfie || !capturedIdCard) {
+            Alert.alert("Error", "Please upload both a selfie and an ID proof.");
+            return;
+        }
+        console.log(capturedIdCard,capturedSelfie)
+        setLoading(true)
+        const formData = new FormData();
+        formData.append('idType', selectedIdType);
+        formData.append('selfie', {
+            uri: capturedSelfie.path,
+            type: 'image/jpeg',
+            name: 'selfie.jpg',
+        });
+        formData.append('idCard', {
+            uri: capturedIdCard.path,
+            type: 'image/jpeg',
+            name: 'id_card.jpg',
+        });
+
+        try {
+            const response = await axios.post('/kyc/upload', formData, {
+                headers: {'Content-Type': 'multipart/form-data'},
+              });
+            Alert.alert("Success", "KYC Submitted Successfully!");
+        } catch (error) {
+            console.log(error.response);
+            Alert.alert("Submission Failed", error.message);
+        }finally{
+            setLoading(false)
         }
     };
     return (
@@ -26,15 +61,10 @@ const KYCDetailsScreen = ({ navigation }) => {
                 {/* Identity Type Options */}
                 <Text style={[styles.sectionTitle, { color: colors.color }]}>Choose Your Identity Type</Text>
                 <View style={styles.identityOptions}>
-                    <TouchableOpacity style={[styles.identityButton, { backgroundColor: colors.secondaryBg, borderColor: colors.secondaryColor }]}>
-                        <Text style={[styles.identityButtonText, { color: colors.secondaryColor }]}>Aadhar Card</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.identityButton, { backgroundColor: colors.secondaryBg, borderColor: colors.secondaryColor }]}>
-                        <Text style={[styles.identityButtonText, { color: colors.secondaryColor }]}>Pan Card</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={[styles.identityButton, { backgroundColor: colors.secondaryBg, borderColor: colors.secondaryColor }]}>
-                        <Text style={[styles.identityButtonText, { color: colors.secondaryColor }]}>Driving License</Text>
-                    </TouchableOpacity>
+                    {idTypes.map((id,index)=>(<TouchableOpacity onPress={()=>{setSelectedIdType(id)}} style={[styles.identityButton, { backgroundColor: selectedIdType===id?'green':colors.secondaryBg, borderColor: colors.secondaryColor }]}>
+                        <Text style={[styles.identityButtonText, { color: colors.secondaryColor }]}>{id}</Text>
+                    </TouchableOpacity>))}
+                    
                 </View>
 
                 {/* Upload Proof Identity */}
@@ -80,7 +110,7 @@ const KYCDetailsScreen = ({ navigation }) => {
 
                 {/* Submit Button */}
                 <TouchableOpacity
-                    onPress={() => { navigation.navigate('LogIn') }}
+                    onPress={handleKYCSubmission}
                     style={[styles.submitButton, { backgroundColor: colors.buttonBg }]}>
                     <Text style={[styles.submitButtonText, { color: colors.buttonText }]}>Submit</Text>
                 </TouchableOpacity>
@@ -91,6 +121,7 @@ const KYCDetailsScreen = ({ navigation }) => {
                 onCapture={handleCapture}
                 mode={cameraMode}
             />
+            <LoadingModal visible={loading} message='Uploading...' />
         </View>
     );
 };
@@ -116,8 +147,8 @@ const styles = StyleSheet.create({
         flexWrap: 'wrap',
     },
     identityButton: {
-        paddingVertical: 10,
-        paddingHorizontal: 12,
+        paddingVertical: 5,
+        paddingHorizontal: 8,
         borderWidth: 1,
         borderColor: '#000000',
         borderRadius: 25,
@@ -129,7 +160,7 @@ const styles = StyleSheet.create({
         shadowRadius: 3,
     },
     identityButtonText: {
-        fontSize: 16,
+        fontSize: 15,
         color: '#000',
     },
     uploadSection: {

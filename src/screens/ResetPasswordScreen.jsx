@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, Platform } from 'r
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ThemeContext from '../theme/ThemeContext';
 import PrimaryButton from '../components/PrimaryButton';
+import LinearGradient from 'react-native-linear-gradient';
 
 const ResetPasswordScreen = ({ navigation }) => {
     const { colors } = useContext(ThemeContext)
@@ -16,7 +17,7 @@ const ResetPasswordScreen = ({ navigation }) => {
     }
 
     return (
-        <View style={[styles.container,{backgroundColor:colors.background}]}>
+        <LinearGradient colors={colors.bgGradient} style={[styles.container]}>
             {/* Back Icon */}
             <TouchableOpacity onPress={() => navigation.goBack()} style={[styles.iconButton,{backgroundColor:colors.secondaryBg}]}>
                 <Icon name="keyboard-arrow-left" size={30} color={colors.color} />
@@ -68,7 +69,7 @@ const ResetPasswordScreen = ({ navigation }) => {
 
             {/* Create Button */}
             <PrimaryButton title="Create" handler={createHandler}/>
-        </View>
+        </LinearGradient>
     );
 };
 

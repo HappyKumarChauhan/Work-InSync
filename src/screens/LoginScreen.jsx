@@ -7,6 +7,7 @@ import axios from '../config/axios';
 import ThemeContext from '../theme/ThemeContext';
 import PrimaryButton from '../components/PrimaryButton';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import LinearGradient from 'react-native-linear-gradient';
 
 const LogInScreen = ({ navigation }) => {
     const {login}=useContext(UserContext);
@@ -50,7 +51,7 @@ const LogInScreen = ({ navigation }) => {
                         <Icon name='keyboard-double-arrow-right' size={30} color={'black'} />
                     </TouchableOpacity>
                 </View>
-                <View style={[styles.main, { backgroundColor: colors.background }]}>
+                <LinearGradient colors={colors.bgGradient} style={[styles.main]}>
                     <Text style={[styles.title, { color: colors.color }]}>Log In</Text>
                     <View style={[styles.inputContainer, { backgroundColor: colors.secondaryBg }]}>
                         <Icon name="mail" size={30} color={colors.color} />
@@ -117,7 +118,7 @@ const LogInScreen = ({ navigation }) => {
                             <Text style={[styles.signUpButtonText, { color: colors.linkColor }]}>Sign Up</Text>
                         </TouchableOpacity>
                     </View>
-                </View>
+                </LinearGradient>
             </View>
         </ImageBackground>
     );

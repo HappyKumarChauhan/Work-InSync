@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, Platform } from 'r
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ThemeContext from '../theme/ThemeContext';
 import PrimaryButton from '../components/PrimaryButton';
+import LinearGradient from 'react-native-linear-gradient';
 const VerificationScreen = ({ navigation }) => {
   const { colors } = useContext(ThemeContext)
     const [code, setCode] = useState(['', '', '', '']);
@@ -30,7 +31,7 @@ const VerificationScreen = ({ navigation }) => {
     };
 
     return (
-        <View style={[styles.container,{backgroundColor:colors.background}]}>
+        <LinearGradient colors={colors.bgGradient} style={[styles.container]}>
             {/* Back Icon */}
             <TouchableOpacity onPress={() => navigation.goBack()} style={[styles.iconButton,{backgroundColor:colors.secondaryBg}]}>
                 <Icon name="keyboard-arrow-left" size={30} color={colors.color} />
@@ -46,6 +47,7 @@ const VerificationScreen = ({ navigation }) => {
                     <TextInput
                         key={index}
                         ref={(ref) => (inputRefs.current[index] = ref)}
+                        secureTextEntry
                         style={[styles.input,{backgroundColor:colors.secondaryBg,color:colors.color}]}
                         value={digit}
                         onChangeText={(value) => handleCodeChange(index, value)}
@@ -66,7 +68,7 @@ const VerificationScreen = ({ navigation }) => {
                     <Text style={[styles.resendLink,{color:colors.linkColor}]}>Resend Code</Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </LinearGradient>
     );
 };
 
@@ -74,7 +76,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f3f3f3', // Background color
-        padding: 20,
+        paddingHorizontal: 20,
     },
     iconButton: {
         width: 50,

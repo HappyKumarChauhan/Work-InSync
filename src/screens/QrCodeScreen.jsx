@@ -10,12 +10,13 @@ import {
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ThemeContext from '../theme/ThemeContext';
 import Header from '../components/Header';
+import LinearGradient from 'react-native-linear-gradient';
 
 const QRCodeScreen = ({navigation}) => {
   const {colors} = useContext(ThemeContext);
 
   return (
-    <View style={[styles.container, {backgroundColor: colors.background}]}>
+    <LinearGradient colors={colors.bgGradient} style={[styles.container]}>
       {/* Header */}
       <Header title="QR Code" navigation={navigation} />
 
@@ -94,7 +95,7 @@ const QRCodeScreen = ({navigation}) => {
           </Text>
         </Text>
       </View>
-    </View>
+    </LinearGradient>
   );
 };
 

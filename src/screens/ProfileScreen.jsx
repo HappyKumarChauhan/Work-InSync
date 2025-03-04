@@ -17,18 +17,19 @@ import {UserContext} from '../context/UserContext';
 import * as ImagePicker from 'react-native-image-picker';
 import {PermissionsAndroid} from 'react-native';
 import axios from '../config/axios'; // Assuming you're using axios for API calls
+import LoadingModal from '../components/LoadingModal';
 
 const ProfileScreen = ({navigation}) => {
-  const {logout} = useContext(UserContext);
-  const [user, setUser] = useState(null);
-
+  const {logout,user,profilePicture,fetchUser} = useContext(UserContext);
   const [modalVisible, setModalVisible] = useState(false);
-  const [profilePicture, setProfilePicture] = useState(null);
   const [imageUri, setImageUri] = useState(null);
+  const [loading, setLoading] = useState(false);
+  
 
   const uploadImage = async () => {
     if (!imageUri) return Alert.alert('Please select an image first');
-
+    setLoading(true);
+    setModalVisible(false);
     const formData = new FormData();
     formData.append('profilePicture', {
       uri: imageUri,
@@ -41,9 +42,11 @@ const ProfileScreen = ({navigation}) => {
         headers: {'Content-Type': 'multipart/form-data'},
       });
       Alert.alert('Photo Uploaded Successfully');
-      fetchProfile();
+      fetchUser()
     } catch (error) {
       Alert.alert('Upload Failed', error.message);
+    } finally{
+        setLoading(false)
     }
   };
 
@@ -83,22 +86,6 @@ const ProfileScreen = ({navigation}) => {
   
     return true;
   };
-
-  const fetchProfile = async () => {
-    try {
-      const response = await axios.get('/user/profile');
-      setUser(response.data.user);
-      setProfilePicture(
-        `${axios.defaults.baseURL}profile-pictures/${response.data.user.profilePicture}`,
-      );
-      console.log(profilePicture);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  useEffect(() => {
-    fetchProfile();
-  }, []);
 
   const pickImage = async () => {
     const hasPermission = await requestPermissions();
@@ -144,10 +131,11 @@ const ProfileScreen = ({navigation}) => {
       {/* Profile Section */}
       <View style={styles.headerContainer}>
         <View style={styles.profileIcon}>
-          <Image
+            {user?(<Image
             source={{uri: profilePicture}}
             style={{width: 100, height: 100, borderRadius: 50}}
-          />
+          />):(<Icon name="account-circle" color={colors.color} size={90} />)}
+          
           <TouchableOpacity
             style={styles.cameraIcon}
             onPress={() => setModalVisible(true)}
@@ -156,66 +144,12 @@ const ProfileScreen = ({navigation}) => {
           </TouchableOpacity>
         </View>
         <Text style={[styles.profileName, {color: colors.color}]}>
-          {user && user.name}
+          {user ? user.name:"Your Name"}
         </Text>
         <Text style={[styles.empId, {color: colors.secondaryColor}]}>
-          Emp Id: {user && user.userId}
+          Emp Id: {user ? user.userId:"12879765"}
         </Text>
       </View>
-
-      {/* Personal Information Title */}
-      <Text style={[styles.personalInfoTitle, {color: colors.color}]}>
-        Personal Information
-      </Text>
-
-      {/* Input Fields */}
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={[
-            styles.input,
-            {backgroundColor: colors.secondaryBg, color: colors.color},
-          ]}
-          placeholder="Your Name"
-          value={user && user.name}
-          placeholderTextColor={colors.secondaryColor}
-        />
-        <TextInput
-          style={[
-            styles.input,
-            {backgroundColor: colors.secondaryBg, color: colors.color},
-          ]}
-          editable={false}
-          placeholder="Your Email"
-          value={user && user.email}
-          placeholderTextColor={colors.secondaryColor}
-        />
-        <TextInput
-          style={[
-            styles.input,
-            {backgroundColor: colors.secondaryBg, color: colors.color},
-          ]}
-          value={user && user.phoneNumber}
-          placeholder="Contact Number"
-          placeholderTextColor={colors.secondaryColor}
-        />
-        <TextInput
-          style={[
-            styles.input,
-            {backgroundColor: colors.secondaryBg, color: colors.color},
-          ]}
-          placeholder="Address"
-          placeholderTextColor={colors.secondaryColor}
-        />
-      </View>
-
-      {/* Save Button */}
-      <TouchableOpacity
-        style={[styles.saveButton, {backgroundColor: colors.buttonBg}]}
-      >
-        <Text style={[styles.saveButtonText, {color: colors.buttonText}]}>
-          Save
-        </Text>
-      </TouchableOpacity>
 
       {/* Settings Title */}
       <Text style={[styles.settingsTitle, {color: colors.color}]}>
@@ -224,6 +158,19 @@ const ProfileScreen = ({navigation}) => {
 
       {/* Settings Section */}
       <View style={styles.settingsContainer}>
+        {/* Personal Details Section */}
+        <TouchableOpacity
+          style={[styles.settingsOption, {backgroundColor: colors.secondaryBg}]}
+          onPress={() => navigation.navigate('PersonalDetails')}
+        >
+          <View style={styles.settingsOptionContent}>
+            <Icon name="person" size={24} color={colors.color} />
+            <Text style={[styles.settingsText, {color: colors.color}]}>
+              Personal Details
+            </Text>
+          </View>
+          <Icon name="arrow-forward" size={24} color={colors.color} />
+        </TouchableOpacity>
         {/* Privacy Section */}
         <TouchableOpacity
           style={[styles.settingsOption, {backgroundColor: colors.secondaryBg}]}
@@ -241,7 +188,7 @@ const ProfileScreen = ({navigation}) => {
         {/* KYC Details Section */}
         <TouchableOpacity
           style={[styles.settingsOption, {backgroundColor: colors.secondaryBg}]}
-          onPress={() => navigation.navigate('KYC')}
+          onPress={() => navigation.navigate('KYCDetails')}
         >
           <View style={styles.settingsOptionContent}>
             <Icon name="verified" size={24} color={colors.color} />
@@ -304,6 +251,7 @@ const ProfileScreen = ({navigation}) => {
           </View>
         </View>
       </Modal>
+      <LoadingModal visible={loading} message='Uploading...'/>
     </ScrollView>
   );
 };
@@ -349,37 +297,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#666',
     marginBottom: 6,
-  },
-  personalInfoTitle: {
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 10,
-    color: '#000',
-  },
-  inputContainer: {
-    marginBottom: 2,
-  },
-  input: {
-    height: 50,
-    borderColor: '#000000',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 15,
-    marginBottom: 8,
-    fontSize: 16,
-    color: '#333',
-  },
-  saveButton: {
-    backgroundColor: '#000',
-    paddingVertical: 15,
-    borderRadius: 8,
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  saveButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
   },
   settingsTitle: {
     fontSize: 20,

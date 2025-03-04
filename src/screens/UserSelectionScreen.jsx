@@ -1,14 +1,12 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet, ImageBackground, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { fonts } from '../styles/fonts';
 import LinearGradient from 'react-native-linear-gradient';
 import ThemeContext from '../theme/ThemeContext';
 
-const WelcomeScreen = ({ navigation }) => {
-    
+const UserSelectionScreen = ({ navigation }) => {
     const { colors } = useContext(ThemeContext);
-    
+
     return (
         <ImageBackground
             source={{ uri: 'https://cdn.decoist.com/wp-content/uploads/2015/08/Upholstered-daybed-for-the-contemporary-home-office.jpg' }}
@@ -16,19 +14,24 @@ const WelcomeScreen = ({ navigation }) => {
         >
             <LinearGradient colors={colors.layoutBgColors} style={styles.overlay}>
                 <View style={styles.main}>
-                    <Text style={[styles.primaryHeading]}>Connect, Create and Collaborate</Text>
-                    <Text style={[styles.secondaryHeading]}>The ultimate Co-working experience</Text>
-                    <Text style={[styles.description]}>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Velit, deleniti dolore aliquam aliquid quo odio laudantium minima illo mollitia libero necessitatibus quidem.</Text>
+                    <Text style={[styles.primaryHeading]}>Choose Your Role</Text>
+                    <Text style={[styles.secondaryHeading]}>Select your account type to proceed</Text>
                     
                     <TouchableOpacity
-                        style={[styles.button, {backgroundColor: colors.buttonBg}]}
-                        onPress={() => navigation.navigate('SelectUser')}
+                        style={[styles.button, { backgroundColor: colors.buttonBg }]}
+                        onPress={() => navigation.navigate('UserRegistration')}
                     >
-                        <Text></Text>
-                        <Text style={[styles.buttonText,{color:colors.buttonText}]}>Get Started</Text>
-                        <Icon name="navigate-next" size={30} color={colors.buttonText} />
+                        <Text style={[styles.buttonText, { color: colors.buttonText }]}>I'm a Normal User</Text>
+                        <Icon name="person" size={30} color={colors.buttonText} />
                     </TouchableOpacity>
-
+                    
+                    <TouchableOpacity
+                        style={[styles.button, { backgroundColor: colors.buttonBg, marginTop: 20 }]}
+                        onPress={() => navigation.navigate('OwnerRegistration')}
+                    >
+                        <Text style={[styles.buttonText, { color: colors.buttonText }]}>I'm a Property Owner</Text>
+                        <Icon name="business" size={30} color={colors.buttonText} />
+                    </TouchableOpacity>
                 </View>
             </LinearGradient>
         </ImageBackground>
@@ -45,30 +48,23 @@ const styles = StyleSheet.create({
         paddingVertical: 80,
     },
     primaryHeading: {
-        color:'white',
-        fontSize: 20,
+        color: 'white',
+        fontSize: 22,
         fontWeight: '700',
-        lineHeight: 27,
+        lineHeight: 30,
         paddingVertical: 5,
-        fontFamily: fonts.Oleo,
     },
     secondaryHeading: {
-        color:'white',
+        color: 'white',
         paddingVertical: 5,
         fontSize: 14,
         fontWeight: '600',
-    },
-    description: {
-        color:'white',
-        paddingVertical: 5,
-        paddingBottom: 30,
-        fontSize: 12,
-        fontWeight: '600',
+        marginBottom: 20,
     },
     overlay: {
         flex: 1,
-        justifyContent: 'flex-end',
-        paddingHorizontal: 0,
+        justifyContent: 'center',
+        paddingHorizontal: 20,
     },
     button: {
         alignItems: 'center',
@@ -76,7 +72,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         height: 58,
         borderRadius: 10,
-        paddingHorizontal: 10,
+        paddingHorizontal: 15,
     },
     buttonText: {
         fontSize: 16,
@@ -84,4 +80,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default WelcomeScreen;
+export default UserSelectionScreen;

@@ -1,11 +1,8 @@
 import React, { useContext } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import ThemeContext from '../theme/ThemeContext';
 import MyTabs from './BottomTabNavigator';
 import WelcomeScreen from '../screens/WelcomeScreen';
-import SignUpScreen from '../screens/SignUpScreen';
 import LogInScreen from '../screens/LoginScreen';
 import ForgotPasswordScreen from '../screens/ForgotPasswordScreen';
 import VerificationScreen from '../screens/VerificationScreen';
@@ -19,6 +16,9 @@ import RoomSpaceScreen from '../screens/Booking/RoomSpaceScreen';
 import CheckInOutScreen from '../screens/Booking/CheckInOutScreen';
 import DetailsScreen from '../screens/Booking/DetailsScreen';
 import NotificationScreen from '../screens/NotificationScreen';
+import UserSelectionScreen from '../screens/UserSelectionScreen';
+import OwnerSignUpScreen from '../screens/OwnerSignUpScreen';
+import UserSignUpScreen from '../screens/UserSignUpScreen';
 
 const Stack = createStackNavigator();
 
@@ -28,7 +28,9 @@ const AppNavigator = () => {
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Welcome">
           <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="SignUp" component={SignUpScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="SelectUser" component={UserSelectionScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="OwnerRegistration" component={OwnerSignUpScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="UserRegistration" component={UserSignUpScreen} options={{ headerShown: false }} />
           <Stack.Screen name="LogIn" component={LogInScreen} options={{ headerShown: false }} />
           <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Verification" component={VerificationScreen} options={{ headerShown: false }} />

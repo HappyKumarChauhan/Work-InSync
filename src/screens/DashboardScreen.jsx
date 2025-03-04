@@ -13,7 +13,6 @@ import {
   SafeAreaView,
   KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard
 } from 'react-native';
-import MenuScreen from './MenuScreen';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { ScrollView } from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
@@ -22,33 +21,12 @@ import ThemeContext from '../theme/ThemeContext';
 
 const Dashboard = ({ navigation }) => {
   const [searchQuery, setSearchQuery] = useState('');
-  const [sidebarWidth] = useState(new Animated.Value(0));
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [mainHeight] = useState(new Animated.Value(300)); // Initial height of the main section
   const [isExpanded, setIsExpanded] = useState(false);
 
   const { colors} = useContext(ThemeContext)
 
   const screenHeight = Dimensions.get('window').height; // Get screen height
-  const screenWidth = Dimensions.get('window').width;   // Get screen width
-
-  const expandSidebar = () => {
-    Animated.timing(sidebarWidth, {
-      toValue: screenWidth,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
-    setIsSidebarOpen(true);
-  };
-
-  const collapseSidebar = () => {
-    Animated.timing(sidebarWidth, {
-      toValue: 0,
-      duration: 300,
-      useNativeDriver: false,
-    }).start();
-    setIsSidebarOpen(false);
-  };
 
   const expandMain = () => {
     Animated.timing(mainHeight, {
@@ -95,10 +73,6 @@ const Dashboard = ({ navigation }) => {
       style={styles.background}
     >
       <View style={styles.overlay}>
-        {/* Sidebar */}
-        <Animated.View style={[styles.sidebar, { width: sidebarWidth }]}>
-          <MenuScreen navigation={navigation} collapseSideBar={collapseSidebar} />
-        </Animated.View>
 
         {/* Top Bar */}
         <View style={styles.topBar}>
@@ -124,8 +98,8 @@ const Dashboard = ({ navigation }) => {
 
         {/* Main Content */}
         <SafeAreaView style={{ flex: 1 }}>
-          <Animated.View style={[styles.main, { height: mainHeight ,backgroundColor:colors.background}]}>
-           
+          <Animated.View style={[styles.main, { height: mainHeight}]}>
+           <LinearGradient colors={colors.bgGradient} style={styles.gradientView}>
               {/* Top section that uses PanResponder */}
               <View
                 style={styles.swipeSection}
@@ -162,6 +136,7 @@ const Dashboard = ({ navigation }) => {
                 
               </View>
             </ScrollView>
+            </LinearGradient>
           </Animated.View>
         </SafeAreaView>
       </View>
@@ -214,16 +189,21 @@ const styles = StyleSheet.create({
     marginLeft: 5,
   },
   main: {
-    borderTopLeftRadius: 40,
-    borderTopRightRadius: 40,
-    paddingTop: 20,
-    paddingBottom: 40,
-    paddingHorizontal: 25,
     alignItems: 'center',
-    backgroundColor: '#F3F3F3',
     position: 'absolute',
     bottom: 0,
     width: '100%',
+    borderTopLeftRadius:40,
+    borderTopRightRadius:40,
+  },
+  gradientView:{
+    paddingTop: 20,
+    paddingBottom: 40,
+    paddingHorizontal: 25,
+    height:'100%',
+    width:'100%',
+    borderTopLeftRadius:40,
+    borderTopRightRadius:40,
   },
   scrollView: {
     width: '100%',

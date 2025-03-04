@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ThemeContext from '../theme/ThemeContext';
 import PrimaryButton from '../components/PrimaryButton';
+import LinearGradient from 'react-native-linear-gradient';
 
 const PasswordSuccessScreen = ({ navigation }) => {
     const { colors } = useContext(ThemeContext)
@@ -10,7 +11,7 @@ const PasswordSuccessScreen = ({ navigation }) => {
         navigation.navigate('LogIn')
     }
     return (
-        <View style={[styles.container, { backgroundColor: colors.background }]}>
+        <LinearGradient colors={colors.bgGradient} style={[styles.container]}>
             <View style={[styles.content,{ backgroundColor: colors.secondaryBg, borderColor: colors.secondaryColor}]}>
                 {/* Success Icon */}
                 <View style={styles.iconContainer}>
@@ -27,7 +28,7 @@ const PasswordSuccessScreen = ({ navigation }) => {
             </View>
             {/* Login Button */}
             <PrimaryButton title="Back to Login" handler={handleLoginClick} />
-        </View>
+        </LinearGradient>
     );
 };
 

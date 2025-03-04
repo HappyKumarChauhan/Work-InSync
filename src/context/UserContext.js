@@ -10,6 +10,7 @@ export const UserProvider = ({children}) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [profilePicture, setProfilePicture] = useState(null)
+  const [role, setRole] = useState('Normal')
 
   // Function to fetch user data from backend
   const fetchUser = async () => {
@@ -17,6 +18,7 @@ export const UserProvider = ({children}) => {
     try {
       const response = await axios.get('/user/profile');
       setUser(response.data.user);
+      setRole(response.data.user.role);
       setProfilePicture(
         `${axios.defaults.baseURL}profile-pictures/${response.data.user.profilePicture}`,
       );
@@ -33,9 +35,9 @@ export const UserProvider = ({children}) => {
 
   // Login function
   const login = async (userData, token) => {
-    setUser(userData);
     await AsyncStorage.setItem('user', JSON.stringify(userData));
     await AsyncStorage.setItem('authToken', token);
+    await fetchUser()
   };
 
   // Logout function
@@ -46,7 +48,7 @@ export const UserProvider = ({children}) => {
   };
   return (
     <UserContext.Provider
-      value={{user, setUser, login, logout, fetchUser, loading, profilePicture}}
+      value={{user, setUser, login, logout, fetchUser, loading, profilePicture,role}}
     >
       {children}
     </UserContext.Provider>

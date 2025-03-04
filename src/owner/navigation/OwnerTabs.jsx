@@ -3,9 +3,10 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import ThemeContext from '../../theme/ThemeContext';
 import {useContext} from 'react';
 import DashboardScreen from '../screens/DasboardScreen';
-import QRCodeScreen from '../screens/QrCodeScreen';
 import UploadScreen from '../screens/UploadScreen';
 import ProfileScreen from '../../screens/ProfileScreen';
+import PropertyDetailsScreen from '../screens/PropertyDetailsScreen';
+import QRCodeScreen from '../screens/QrCodeScreen';
 
 const Tab = createBottomTabNavigator();
 function OwnerTabs() {
@@ -40,18 +41,18 @@ function OwnerTabs() {
           ),
         }}
       />
-      {/* <Tab.Screen
+      <Tab.Screen
         name="Book"
-        component={BookingsScreen}
+        component={PropertyDetailsScreen}
         options={{
           tabBarIcon: ({color, size}) => (
             <Icon name="book" size={30} color={color} />
           ),
         }}
-      /> */}
-      {/* <Tab.Screen
+      />
+      <Tab.Screen
         name="QrCodeScanner"
-        component={QrCodeScreen} // Custom component for the screen
+        component={QRCodeScreen} // Custom component for the screen
         options={{
           tabBarIcon: ({color, size}) => (
             <Icon name="qr-code-scanner" size={30} color="white" />
@@ -67,10 +68,10 @@ function OwnerTabs() {
             zIndex: -10,
           },
         }}
-      /> */}
+      />
       <Tab.Screen
         name="Upload"
-        component={UploadScreen}
+        component={ProfileScreen}
         options={{
           tabBarIcon: ({color, size}) => (
             <Icon name="meeting-room" size={30} color={color} />

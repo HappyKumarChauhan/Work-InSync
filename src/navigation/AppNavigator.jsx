@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useContext} from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import WelcomeScreen from '../screens/WelcomeScreen';
@@ -15,10 +15,12 @@ import UserSignUpScreen from '../screens/UserSignUpScreen';
 import PersonalDetailsScreen from '../screens/PersonalDetailsScreen';
 import UserDrawer from '../user/navigation/UserDrawer';
 import OwnerDrawer from '../owner/navigation/OwnerDrawer';
+import { UserContext } from '../context/UserContext';
 
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
+  const {role}=useContext(UserContext)
 
   return (
       <NavigationContainer>
@@ -31,7 +33,7 @@ const AppNavigator = () => {
           <Stack.Screen name="Verification" component={VerificationScreen} options={{ headerShown: false }} />
           <Stack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} options={{ headerShown: false }} />
           <Stack.Screen name="PasswordSuccessScreen" component={PasswordSuccessScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="Dashboard" component={OwnerDrawer} options={{ headerShown: false }} />
+          <Stack.Screen name="Dashboard" component={role==='Normal'?UserDrawer:OwnerDrawer} options={{ headerShown: false }} />
           <Stack.Screen name="Profile" component={ProfileScreen} options={{ headerShown: false }} />
           <Stack.Screen name="PersonalDetails" component={PersonalDetailsScreen} options={{ headerShown: false }} />
           <Stack.Screen name="KYC" component={KYCDetailsScreen} options={{ headerShown: false }} />

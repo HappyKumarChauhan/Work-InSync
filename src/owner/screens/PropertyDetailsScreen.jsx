@@ -12,8 +12,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import ThemeContext from '../../theme/ThemeContext';
 import Header from '../components/Header';
 import RadioGroup from 'react-native-radio-buttons-group';
-import axios from '../config/axios';
-import LoadingModal from '../components/LoadingModal';
+import axios from '../../config/axios';
+import LoadingModal from '../../components/LoadingModal';
 
 const PropertyDetailsScreen = ({navigation}) => {
   const {colors} = useContext(ThemeContext);

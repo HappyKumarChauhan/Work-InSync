@@ -147,7 +147,7 @@ const ProfileScreen = ({navigation}) => {
           {user ? user.name:"Your Name"}
         </Text>
         <Text style={[styles.empId, {color: colors.secondaryColor}]}>
-          Emp Id: {user ? user.userId:"12879765"}
+          Emp Id: {user ? user._id:"12879765"}
         </Text>
       </View>
 

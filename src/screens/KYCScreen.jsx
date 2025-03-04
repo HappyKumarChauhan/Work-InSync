@@ -4,6 +4,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import ThemeContext from '../theme/ThemeContext';
 import Header from '../components/Header';
 import CameraModal from '../components/CameraModal';
+import LoadingModal from '../components/LoadingModal';
 
 const KYCDetailsScreen = ({ navigation }) => {
     const { colors } = useContext(ThemeContext);

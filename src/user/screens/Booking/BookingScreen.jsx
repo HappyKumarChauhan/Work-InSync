@@ -57,44 +57,8 @@ const styles = StyleSheet.create({
     color: '#052659',
     fontWeight: 'bold'
   },
-  cardsContainer: {
-    flex: 1,
-    flexDirection: 'column',
-    gap: 20,
-    paddingHorizontal: 20,
-    paddingVertical: 20,
-  },
-  card: {
-    backgroundColor: '#135767',
-    flexDirection: 'row',
-    paddingHorizontal: 10,
-    paddingVertical: 15,
-    borderRadius: 10
-  },
-  cardDescription: {
-    paddingHorizontal: 10,
-    flex: 1,
-  },
-  cardTitle: {
-    fontSize: 15,
-    marginVertical: 5,
-    color: 'white',
-    fontWeight: 400,
-  },
-  cardContent: {
-    marginVertical: 1,
-    fontSize: 12,
-    color: 'white',
-    fontWeight: 400
-  },
-  cardButton: {
-    flex: 1,
-    backgroundColor: 'white',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 10,
-    marginTop: 10,
-  },
+ 
+
 });
 
 export default BookingsScreen;

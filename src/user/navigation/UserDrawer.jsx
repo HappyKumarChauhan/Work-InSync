@@ -37,10 +37,10 @@ const CustomDrawerContent = props => {
       >
         {/* Header Section */}
         <View style={styles.drawerHeader}>
-          <TouchableOpacity style={styles.iconButton} onPress={() => props.navigation.navigate('Profile')}>
+          <TouchableOpacity style={[styles.iconButton, {backgroundColor:colors.iconTwo}]} onPress={() => props.navigation.navigate('Profile')}>
             <Icon name="account-circle" size={30} color="#fff" />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.iconButton} onPress={() => props.navigation.closeDrawer()}>
+          <TouchableOpacity style={[styles.iconButton, {backgroundColor:colors.iconTwo}]} onPress={() => props.navigation.closeDrawer()}>
             <Icon name="close" size={30} color="#fff" />
           </TouchableOpacity>
         </View>

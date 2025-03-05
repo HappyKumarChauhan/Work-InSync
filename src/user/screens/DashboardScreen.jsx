@@ -128,7 +128,7 @@ const Dashboard = ({ navigation }) => {
                     <Text style={styles.cardTitle}>Bengaluru Brigade</Text>
                     <Text style={styles.cardDetails}>For: Self</Text>
                     <Text style={styles.cardDetails}>Desk: BM-8F-WS-26-2nd Floor</Text>
-                    <TouchableOpacity style={styles.detailsButton} onPress={() => navigation.navigate('RoomSpace')}>
+                    <TouchableOpacity style={[styles.detailsButton, {backgroundColor:colors.Details}]} onPress={() => navigation.navigate('RoomSpace')}>
                       <Text style={styles.detailsButtonText}>Details</Text>
                     </TouchableOpacity>
                   </View>
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     padding: 20,
     marginVertical: 10,
-    height: 190,
+    height: 199,
   },
   cardImage: {
     width: 80,
@@ -268,17 +268,17 @@ const styles = StyleSheet.create({
     marginVertical: 2,
   },
   detailsButton: {
-    marginTop: 20,
-    paddingVertical: 6,
-    paddingHorizontal: 12,
-    backgroundColor: 'white',
+    marginTop: 25,
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    // backgroundColor: 'white',
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
     width: 85,
   },
   detailsButtonText: {
-    color: '#052659',
+    color: '#000000',
     fontWeight: 'bold',
   },
   sidebar: {

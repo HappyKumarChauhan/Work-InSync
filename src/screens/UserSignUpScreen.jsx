@@ -207,7 +207,7 @@ const UserSignUpScreen = ({navigation,route}) => {
               onPress={handleFacebookSignUp}
               style={styles.socialIconButton}
             >
-              <Icon name="facebook" size={30} color={'blue'} />
+              <Icon name="facebook" size={30} color={colors.iconColor} />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={handleGoogleSignUp}

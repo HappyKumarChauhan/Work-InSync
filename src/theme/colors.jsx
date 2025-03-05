@@ -14,6 +14,7 @@ export const lightTheme = {
     background: '#FFFFFF',
     iconTwo : '#1D2B34',
     qrBorder : '#D3D3D3',
+    Details: '#ffffff'
   };
   
   export const darkTheme = {
@@ -30,7 +31,8 @@ export const lightTheme = {
     buttonBg:'#01E083',
     buttonText:'#121212',
     background: '#121212',
-    iconTwo : '#2f2f2f',
+    iconTwo : '#3f3f3f',
     qrBorder : '#2f2f2f',
+    Details : '#01E083',
   };
   

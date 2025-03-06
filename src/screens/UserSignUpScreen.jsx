@@ -96,7 +96,7 @@ const UserSignUpScreen = ({navigation,route}) => {
         </View>
         <LinearGradient colors={colors.bgGradient} style={[styles.main]}>
           <Text style={[styles.title, {color: colors.color}]}>
-            {role==='Normal'?'Normal User ':'Property Owner '}Registration
+            Sign Up
           </Text>
           <View
             style={[

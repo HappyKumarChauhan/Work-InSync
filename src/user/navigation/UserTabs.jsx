@@ -7,6 +7,7 @@ import WishlistScreen from '../screens/WishlistScreen';
 import QRCodeScreen from '../../screens/QrCodeScreen';
 import ThemeContext from '../../theme/ThemeContext';
 import { useContext } from 'react';
+import MapScreen from '../screens/MapScreen';
 const Tab = createBottomTabNavigator();
 function UserTabs() {
   const { colors} = useContext(ThemeContext)
@@ -31,9 +32,10 @@ function UserTabs() {
   >
     <Tab.Screen
       name="Home"
+      // component={Dashboard}
       component={Dashboard}
       options={{
-        tabBarIcon: ({ color,focused, size }) => (
+        tabBarIcon: ({ color, size }) => (
           <Icon name="home" size={30} color={color} />
         ),
       }}
@@ -42,7 +44,7 @@ function UserTabs() {
       name="Book"
       component={WishlistScreen}
       options={{
-        tabBarIcon: ({ color,focused, size }) => (
+        tabBarIcon: ({ color, size }) => (
           <Icon name="book" size={30} color={color} />
         ),
       }}
@@ -51,7 +53,7 @@ function UserTabs() {
       name="QrCodeScanner"
       component={QRCodeScreen} // Custom component for the screen
       options={{
-        tabBarIcon: ({ color,focused, size }) => (
+        tabBarIcon: ({ color, size }) => (
           <Icon name="qr-code-scanner" size={30} color="white" />
         ),
         tabBarIconStyle: { backgroundColor: 'black',width:50, height:50, justifyContent:'center',borderRadius:30,position:'relative',bottom:5, zIndex:-10 },
@@ -61,7 +63,7 @@ function UserTabs() {
       name="Meeting"
       component={BookingsScreen}
       options={{
-        tabBarIcon: ({ color,focused, size }) => (
+        tabBarIcon: ({ color, size }) => (
           <Icon name="meeting-room" size={30} color={color} />
         ),
       }}
@@ -70,7 +72,7 @@ function UserTabs() {
       name="Profile"
       component={ProfileScreen}
       options={{
-        tabBarIcon: ({ color,focused, size }) => (
+        tabBarIcon: ({ color, size }) => (
           <Icon name="person-outline" size={30} color={color} />
         ),
       }}

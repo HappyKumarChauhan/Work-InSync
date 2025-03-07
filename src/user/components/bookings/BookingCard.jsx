@@ -3,7 +3,7 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import ThemeContext from '../../../theme/ThemeContext';
 
-const BookingCard = ({navigation}) => {
+const BookingCard = ({navigation,buttonText}) => {
   const { colors } = useContext(ThemeContext)
 
     return (
@@ -22,7 +22,7 @@ const BookingCard = ({navigation}) => {
                     style={[styles.cardButton,{backgroundColor:colors.Details}]}
                     onPress={() => navigation.navigate('RoomSpace')}
                 >
-                    <Text>Book Now</Text>
+                    <Text>{buttonText}</Text>
                 </TouchableOpacity>
             </View>
         </LinearGradient>

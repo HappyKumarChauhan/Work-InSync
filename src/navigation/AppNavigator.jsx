@@ -20,7 +20,7 @@ import { UserContext } from '../context/UserContext';
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
-  const {role}=useContext(UserContext)
+  const {role,user}=useContext(UserContext)
 
   return (
       <NavigationContainer>

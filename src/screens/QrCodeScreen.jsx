@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, { useContext } from 'react';
 import {
   View,
   Text,
@@ -11,9 +11,10 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import ThemeContext from '../theme/ThemeContext';
 import Header from '../components/Header';
 import LinearGradient from 'react-native-linear-gradient';
+import QRCode from "react-native-qrcode-svg";
 
-const QRCodeScreen = ({navigation}) => {
-  const {colors} = useContext(ThemeContext);
+const QRCodeScreen = ({ navigation }) => {
+  const { colors } = useContext(ThemeContext);
 
   return (
     <LinearGradient colors={colors.bgGradient} style={[styles.container]}>
@@ -22,14 +23,20 @@ const QRCodeScreen = ({navigation}) => {
 
       {/* QR Scanner Section */}
       <View style={styles.qrContainer}>
-        <View style={[styles.qrBorder, {backgroundColor: colors.qrBorder}]}>
+        <View style={[styles.qrBorder, { backgroundColor: colors.qrBorder }]}>
           <View style={styles.qrInnerBox}>
-            <Image
+            {/* <Image
               source={{
                 uri:
                   'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=SampleQR',
               }}
               style={styles.qrImage}
+            /> */}
+            <QRCode
+              value="https://yourwebsite.com" // QR code data (can be a URL, text, etc.)
+              size={100} // Size of the QR code
+              color="black" // QR code color
+              backgroundColor="white" // Background color
             />
           </View>
           {/* Phone Icon (Bottom Left) */}
@@ -47,10 +54,10 @@ const QRCodeScreen = ({navigation}) => {
             style={styles.cameraIcon}
           />
         </View>
-        <Text style={[styles.scanText, {color: colors.color}]}>
+        <Text style={[styles.scanText, { color: colors.color }]}>
           Scan QR Code For Booking
         </Text>
-        <Text style={[styles.description, {color: colors.secondaryColor}]}>
+        <Text style={[styles.description, { color: colors.secondaryColor }]}>
           Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
           eiusmod tempor incididunt ut labore et dolore magna aliqua.
         </Text>
@@ -59,14 +66,14 @@ const QRCodeScreen = ({navigation}) => {
       {/* OR Text with Lines */}
       <View style={styles.orContainer}>
         <View style={styles.line} />
-        <Text style={[styles.orText, {color: colors.secondaryColor}]}>OR</Text>
+        <Text style={[styles.orText, { color: colors.secondaryColor }]}>OR</Text>
         <View style={styles.line} />
       </View>
 
       {/* OTP Section */}
       <View style={styles.otpContainer}>
         <View
-          style={[styles.inputContainer, {backgroundColor: colors.secondaryBg}]}
+          style={[styles.inputContainer, { backgroundColor: colors.secondaryBg }]}
         >
           <Icon
             name="verified"
@@ -77,20 +84,20 @@ const QRCodeScreen = ({navigation}) => {
           <TextInput
             placeholder="Enter OTP"
             placeholderTextColor={colors.secondaryColor}
-            style={[styles.input, {color: colors.color}]}
+            style={[styles.input, { color: colors.color }]}
           />
         </View>
         <TouchableOpacity
           onPress={() => navigation.navigate('ForgotPassword')}
-          style={[styles.otpButton, {backgroundColor: colors.buttonBg}]}
+          style={[styles.otpButton, { backgroundColor: colors.buttonBg }]}
         >
-          <Text style={[styles.otpButtonText, {color: colors.buttonText}]}>
+          <Text style={[styles.otpButtonText, { color: colors.buttonText }]}>
             Get OTP
           </Text>
         </TouchableOpacity>
         <Text style={styles.resendText}>
           Didn't receive any code?{' '}
-          <Text style={[styles.resendLink, {color: colors.linkColor}]}>
+          <Text style={[styles.resendLink, { color: colors.linkColor }]}>
             Resend Code
           </Text>
         </Text>
@@ -233,3 +240,26 @@ const styles = StyleSheet.create({
 });
 
 export default QRCodeScreen;
+// {/* QR Scanner Section */}
+// <View style={styles.qrContainer}>
+//   <View style={[styles.qrBorder, { backgroundColor: colors.qrBorder }]}>
+//     <View style={styles.qrInnerBox}>
+//       {userBookingData ? (
+//         <QRCode
+//           value={JSON.stringify(userBookingData)} // Unique QR data
+//           size={200}
+//           color="black"
+//           backgroundColor="white"
+//         />
+//       ) : (
+//         <Text style={{ color: colors.color }}>Loading...</Text>
+//       )}
+//     </View>
+//   </View>
+//   <Text style={[styles.scanText, { color: colors.color }]}>
+//     Scan QR Code For Booking
+//   </Text>
+//   <Text style={[styles.description, { color: colors.secondaryColor }]}>
+//     Your unique QR code for booking confirmation.
+//   </Text>
+// </View>

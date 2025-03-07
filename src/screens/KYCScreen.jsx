@@ -62,7 +62,7 @@ const KYCDetailsScreen = ({ navigation }) => {
                 {/* Identity Type Options */}
                 <Text style={[styles.sectionTitle, { color: colors.color }]}>Choose Your Identity Type</Text>
                 <View style={styles.identityOptions}>
-                    {idTypes.map((id,index)=>(<TouchableOpacity onPress={()=>{setSelectedIdType(id)}} style={[styles.identityButton, { backgroundColor: selectedIdType===id?'green':colors.secondaryBg, borderColor: colors.secondaryColor }]}>
+                    {idTypes.map((id,index)=>(<TouchableOpacity onPress={()=>{setSelectedIdType(id)}} style={[styles.identityButton, { backgroundColor: selectedIdType===id?'#000':colors.secondaryBg, borderColor: colors.secondaryColor }]}>
                         <Text style={[styles.identityButtonText, { color: colors.secondaryColor }]}>{id}</Text>
                     </TouchableOpacity>))}
                     

@@ -48,6 +48,7 @@ const CustomDrawerContent = props => {
         <DrawerContentScrollView
           {...props}
           contentContainerStyle={{gap: 15}}
+          showsVerticalScrollIndicator={false}
         >
         <Text style={styles.title}>PwC WorkInSync</Text>
   

@@ -7,7 +7,7 @@ const CompletedBookings = ({ navigation }) => {
   return (
     <ScrollView style={styles.cardsContainer}>
             {Array.from({length:8}).map((_, index) => (
-              <BookingCard key={index} navigation={navigation}/>
+              <BookingCard key={index} buttonText="Re-Book" navigation={navigation}/>
             ))}
     </ScrollView>
   )

@@ -14,11 +14,14 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import ThemeContext from '../../theme/ThemeContext';
 import Header from '../components/Header';
+import axios from '../../config/axios'
+import LoadingModal from '../../components/LoadingModal'
 
 const UploadScreen = ({ navigation,route }) => {
   const { colors } = useContext(ThemeContext);
   const [photos, setPhotos] = useState([]);
   const {propertyId} =route.params;
+  const [loading, setLoading] = useState(false)
   
   // Request Camera Permission
   const requestCameraPermission = async () => {
@@ -108,6 +111,42 @@ const UploadScreen = ({ navigation,route }) => {
     });
   };
 
+  const uploadImages = async () => {
+    if (photos.length === 0) {
+      Alert.alert('No Images', 'Please add at least one image before uploading.');
+      return;
+    }
+    setLoading(true)
+  
+    const formData = new FormData();
+    photos.forEach((photo, index) => {
+      formData.append('images', {
+        uri: photo.uri,
+        name: photo.name,
+        type: 'image/jpeg', // Ensure the correct MIME type
+      });
+    });
+  
+    try {
+      const response = await axios.post(`/properties/${propertyId}/upload-images`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+  
+      if (response.status === 200) {
+        Alert.alert('Success', 'Images uploaded successfully!');
+        setPhotos([]); // Clear images after upload
+      } else {
+        throw new Error(response.data.message || 'Image upload failed');
+      }
+    } catch (error) {
+      Alert.alert('Upload Error', error.response?.data?.message || error.message);
+    }finally{
+      setLoading(false)
+    }
+  };
+  
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>      
       <Header title="Upload" navigation={navigation} />
@@ -148,11 +187,12 @@ const UploadScreen = ({ navigation,route }) => {
         )}
       />
 
-      <TouchableOpacity style={[styles.nextButton, { backgroundColor: colors.buttonBg }]} onPress={() => navigation.navigate('PropertyDetails')}>
+      <TouchableOpacity style={[styles.nextButton, { backgroundColor: colors.buttonBg }]} onPress={uploadImages}>
         <Text></Text>
         <Text style={[styles.nextButtonText, { color: colors.buttonText }]}>Next</Text>
         <Icon name="chevron-right" size={24} color={colors.buttonText} />
       </TouchableOpacity>
+      <LoadingModal message="Uploading..." visible={loading} />
     </View>
   );
 };

@@ -126,6 +126,7 @@ const ProfileScreen = ({navigation}) => {
         <Text style={[styles.topBarTitle, {color: colors.color}]}>
           My Profile
         </Text>
+        <View></View>
       </View>
 
       {/* Profile Section */}
@@ -263,13 +264,13 @@ const styles = StyleSheet.create({
   },
   topBar: {
     flexDirection: 'row',
+    justifyContent:'space-between',
     alignItems: 'center',
     marginBottom: 18,
   },
   topBarTitle: {
     fontSize: 20,
     fontWeight: 600,
-    marginLeft: 80,
     marginTop: 1,
     color: '#000',
   },

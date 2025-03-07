@@ -7,7 +7,7 @@ const UpcomingBookings = ({navigation}) => {
   
   return (
     <ScrollView style={styles.cardsContainer}>
-            {Array.from({length:8}).map((_, index) => (<BookingCard key={index} navigation={navigation}/>))}
+            {Array.from({length:8}).map((_, index) => (<BookingCard key={index} buttonText="View QR" navigation={navigation}/>))}
     </ScrollView>
   )
 }

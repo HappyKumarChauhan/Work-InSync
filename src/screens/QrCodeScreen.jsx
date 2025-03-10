@@ -25,13 +25,6 @@ const QRCodeScreen = ({ navigation }) => {
       <View style={styles.qrContainer}>
         <View style={[styles.qrBorder, { backgroundColor: colors.qrBorder }]}>
           <View style={styles.qrInnerBox}>
-            {/* <Image
-              source={{
-                uri:
-                  'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=SampleQR',
-              }}
-              style={styles.qrImage}
-            /> */}
             <QRCode
               value="https://yourwebsite.com" // QR code data (can be a URL, text, etc.)
               size={100} // Size of the QR code

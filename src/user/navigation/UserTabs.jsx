@@ -8,6 +8,7 @@ import QRCodeScreen from '../../screens/QrCodeScreen';
 import ThemeContext from '../../theme/ThemeContext';
 import { useContext } from 'react';
 import MapScreen from '../screens/MapScreen';
+import GenerateQr from '../screens/GenerateQrScreen';
 const Tab = createBottomTabNavigator();
 function UserTabs() {
   const { colors} = useContext(ThemeContext)
@@ -51,10 +52,10 @@ function UserTabs() {
     />
     <Tab.Screen
       name="QrCodeScanner"
-      component={QRCodeScreen} // Custom component for the screen
+      component={GenerateQr} // Custom component for the screen
       options={{
         tabBarIcon: ({ color, size }) => (
-          <Icon name="qr-code-scanner" size={30} color="white" />
+          <Icon name="qr-code" size={30} color="white" />
         ),
         tabBarIconStyle: { backgroundColor: 'black',width:50, height:50, justifyContent:'center',borderRadius:30,position:'relative',bottom:5, zIndex:-10 },
       }}

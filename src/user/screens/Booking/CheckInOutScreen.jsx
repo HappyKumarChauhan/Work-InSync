@@ -6,9 +6,8 @@ import { TextInput } from 'react-native-gesture-handler';
 import ThemeContext from '../../../theme/ThemeContext';
 import Header from '../../../components/Header';
 
-
-
-const CheckInOutScreen = ({ navigation }) => {
+const CheckInOutScreen = ({ navigation,route }) => {
+  const {property}=route.params;
   const { colors } = useContext(ThemeContext)
   const [selectedStartDate, setSelectedStartDate] = useState('');
   const [selectedEndDate, setSelectedEndDate] = useState('');
@@ -46,6 +45,7 @@ const CheckInOutScreen = ({ navigation }) => {
       startDate: selectedStartDate,
       endDate: selectedEndDate,
       guests: numberOfGuests,
+      property
     });
   };
 

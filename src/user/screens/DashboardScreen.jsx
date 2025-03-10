@@ -1,4 +1,4 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useState,useEffect} from 'react';
 import {
   ImageBackground,
   View,
@@ -20,11 +20,13 @@ import {ScrollView} from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
 import ThemeContext from '../../theme/ThemeContext';
 import MapView, {Marker} from 'react-native-maps';
+import axios from '../../config/axios'
 
 const Dashboard = ({navigation}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [mainHeight] = useState(new Animated.Value(300)); // Initial height of the main section
   const [isExpanded, setIsExpanded] = useState(false);
+  const [properties, setProperties] = useState([])
 
   const {colors,theme} = useContext(ThemeContext);
 
@@ -180,6 +182,19 @@ const Dashboard = ({navigation}) => {
     }
   ];
     
+  const fetchProperties=async()=>{
+    try {
+      const response = await axios.get('/properties');
+      setProperties(response.data)
+    } catch (error) {
+      console.error('Error fetching properties:', error.response?.data?.message || error.message);
+      throw error;
+    }
+  }
+
+  useEffect(() => {
+    fetchProperties()
+  }, [])
   
 
   return (
@@ -279,7 +294,7 @@ const Dashboard = ({navigation}) => {
                 keyboardDismissMode="on-drag"
               >
                 <View style={styles.otherContent}>
-                  {Array.from({length: 8}).map((_, index) => (
+                  {properties.map((property, index) => (
                     <LinearGradient
                       key={index}
                       colors={colors.cardBgColors}
@@ -288,22 +303,21 @@ const Dashboard = ({navigation}) => {
                       <Image
                         style={styles.cardImage}
                         source={{
-                          uri:
-                            'https://s3-alpha-sig.figma.com/img/0404/f946/26a4a2e1c0b5a85c6e08dc70b45bde20?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Cv7SwThHtmKs6kAvmFlFYie6JTOqZsGdvogIKpfAgMkHaTJ9y6XgYlD7P-PjwqND-m~sQEz9N8tDyWxxLInxeolLTYNpTPUkutN-NpCFih-AT9PxTFju3Dh1mZzI7evtvf5cipkgEcrH0lfo7fY8ATAFG-d3SkP7mUpDmdkhkf~m1QDKwqE0NUQHnVzW03UlWdGsbvH9b8EO8WWyQz9KjF-xTPDqIlpphCtDCoKFQDxDVlGKub4JluWtRnNJwA29gpGX-ZWkutHxz6sqVX5Epvp~z-YyKbk-MKRr7u1i1K6q0xGJP~0HcAuytbbEFtAIdsWFupCTim-ga-Esf-6W0Q__',
+                          uri:`${axios.defaults.baseURL}/${property.images[0]}`,
                         }}
                       />
                       <View style={styles.cardContent}>
-                        <Text style={styles.cardTitle}>Bengaluru Brigade</Text>
-                        <Text style={styles.cardDetails}>For: Self</Text>
+                        <Text style={styles.cardTitle}>{property.title}</Text>
+                        <Text style={styles.cardDetails}>INR: {property.price} {property.rentalType}</Text>
                         <Text style={styles.cardDetails}>
-                          Desk: BM-8F-WS-26-2nd Floor
+                          Location: {property.location}
                         </Text>
                         <TouchableOpacity
                           style={[
                             styles.detailsButton,
                             {backgroundColor: colors.Details},
                           ]}
-                          onPress={() => navigation.navigate('RoomSpace')}
+                          onPress={() => navigation.navigate('RoomSpace',{propertyId:property._id})}
                         >
                           <Text style={styles.detailsButtonText}>Details</Text>
                         </TouchableOpacity>

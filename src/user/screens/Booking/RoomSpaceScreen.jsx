@@ -1,26 +1,32 @@
-import React, { useContext, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView,Linking } from 'react-native';
+import React, { useContext, useState, useEffect } from 'react';
+import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, Linking } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ThemeContext from '../../../theme/ThemeContext';
 import Header from '../../../components/Header';
+import axios from '../../../config/axios'
 
 
-const RoomSpaceScreen = ({ navigation }) => {
-  const { colors} = useContext(ThemeContext)
-  const [selectedImage, setSelectedImage] = useState(
-    'https://s3-alpha-sig.figma.com/img/0404/f946/26a4a2e1c0b5a85c6e08dc70b45bde20?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Cv7SwThHtmKs6kAvmFlFYie6JTOqZsGdvogIKpfAgMkHaTJ9y6XgYlD7P-PjwqND-m~sQEz9N8tDyWxxLInxeolLTYNpTPUkutN-NpCFih-AT9PxTFju3Dh1mZzI7evtvf5cipkgEcrH0lfo7fY8ATAFG-d3SkP7mUpDmdkhkf~m1QDKwqE0NUQHnVzW03UlWdGsbvH9b8EO8WWyQz9KjF-xTPDqIlpphCtDCoKFQDxDVlGKub4JluWtRnNJwA29gpGX-ZWkutHxz6sqVX5Epvp~z-YyKbk-MKRr7u1i1K6q0xGJP~0HcAuytbbEFtAIdsWFupCTim-ga-Esf-6W0Q__'
-  );
+const RoomSpaceScreen = ({ navigation, route }) => {
+  const [property, setProperty] = useState(null)
+  const { propertyId } = route.params;
+  const { colors } = useContext(ThemeContext)
+  const [selectedImage, setSelectedImage] = useState(null);
 
-  const imageList = [
-    'https://s3-alpha-sig.figma.com/img/0404/f946/26a4a2e1c0b5a85c6e08dc70b45bde20?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Cv7SwThHtmKs6kAvmFlFYie6JTOqZsGdvogIKpfAgMkHaTJ9y6XgYlD7P-PjwqND-m~sQEz9N8tDyWxxLInxeolLTYNpTPUkutN-NpCFih-AT9PxTFju3Dh1mZzI7evtvf5cipkgEcrH0lfo7fY8ATAFG-d3SkP7mUpDmdkhkf~m1QDKwqE0NUQHnVzW03UlWdGsbvH9b8EO8WWyQz9KjF-xTPDqIlpphCtDCoKFQDxDVlGKub4JluWtRnNJwA29gpGX-ZWkutHxz6sqVX5Epvp~z-YyKbk-MKRr7u1i1K6q0xGJP~0HcAuytbbEFtAIdsWFupCTim-ga-Esf-6W0Q__',
-    'https://s3-alpha-sig.figma.com/img/0404/f946/26a4a2e1c0b5a85c6e08dc70b45bde20?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Cv7SwThHtmKs6kAvmFlFYie6JTOqZsGdvogIKpfAgMkHaTJ9y6XgYlD7P-PjwqND-m~sQEz9N8tDyWxxLInxeolLTYNpTPUkutN-NpCFih-AT9PxTFju3Dh1mZzI7evtvf5cipkgEcrH0lfo7fY8ATAFG-d3SkP7mUpDmdkhkf~m1QDKwqE0NUQHnVzW03UlWdGsbvH9b8EO8WWyQz9KjF-xTPDqIlpphCtDCoKFQDxDVlGKub4JluWtRnNJwA29gpGX-ZWkutHxz6sqVX5Epvp~z-YyKbk-MKRr7u1i1K6q0xGJP~0HcAuytbbEFtAIdsWFupCTim-ga-Esf-6W0Q__',
-    'https://s3-alpha-sig.figma.com/img/0404/f946/26a4a2e1c0b5a85c6e08dc70b45bde20?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Cv7SwThHtmKs6kAvmFlFYie6JTOqZsGdvogIKpfAgMkHaTJ9y6XgYlD7P-PjwqND-m~sQEz9N8tDyWxxLInxeolLTYNpTPUkutN-NpCFih-AT9PxTFju3Dh1mZzI7evtvf5cipkgEcrH0lfo7fY8ATAFG-d3SkP7mUpDmdkhkf~m1QDKwqE0NUQHnVzW03UlWdGsbvH9b8EO8WWyQz9KjF-xTPDqIlpphCtDCoKFQDxDVlGKub4JluWtRnNJwA29gpGX-ZWkutHxz6sqVX5Epvp~z-YyKbk-MKRr7u1i1K6q0xGJP~0HcAuytbbEFtAIdsWFupCTim-ga-Esf-6W0Q__',
-    'https://s3-alpha-sig.figma.com/img/0abf/9d1c/32df1966e2ce33e9f7138b85ab0dcecc?Expires=1739145600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=VKo~nT4nLgT1pgW9Z~nGTryXNuhC2V0EBEvT5-DXnDn-VH0rIM88DDRAOkXJHMioOJVjP~No-gytyQQ~bxiui2xZJ5YYTZ~CiUoPz7l1S0h2opGQPQR9YoNtOIyePvbda8X4HWyvULbTP4NyA28nAyQ01bgBqVGTot1kvloZ3XdfRUL9c5O6pDx1h7~WR2tXJgdPgU1TnJRb7L4RByOkzj~tuKmwwpmVIFXlf3a5dSDy~yn0thnFHSRJQ03EsvC3eTDmoawOmual~znWGCaLDkO-nyB~6ttuLXmQaDpro7f0iDbuOqVQWm4SHLg1r4uZPgigvZPklOgLVJ6PyYl6PQ__',
-    'https://s3-alpha-sig.figma.com/img/0404/f946/26a4a2e1c0b5a85c6e08dc70b45bde20?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Cv7SwThHtmKs6kAvmFlFYie6JTOqZsGdvogIKpfAgMkHaTJ9y6XgYlD7P-PjwqND-m~sQEz9N8tDyWxxLInxeolLTYNpTPUkutN-NpCFih-AT9PxTFju3Dh1mZzI7evtvf5cipkgEcrH0lfo7fY8ATAFG-d3SkP7mUpDmdkhkf~m1QDKwqE0NUQHnVzW03UlWdGsbvH9b8EO8WWyQz9KjF-xTPDqIlpphCtDCoKFQDxDVlGKub4JluWtRnNJwA29gpGX-ZWkutHxz6sqVX5Epvp~z-YyKbk-MKRr7u1i1K6q0xGJP~0HcAuytbbEFtAIdsWFupCTim-ga-Esf-6W0Q__',
-    'https://s3-alpha-sig.figma.com/img/0abf/9d1c/32df1966e2ce33e9f7138b85ab0dcecc?Expires=1739145600&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=VKo~nT4nLgT1pgW9Z~nGTryXNuhC2V0EBEvT5-DXnDn-VH0rIM88DDRAOkXJHMioOJVjP~No-gytyQQ~bxiui2xZJ5YYTZ~CiUoPz7l1S0h2opGQPQR9YoNtOIyePvbda8X4HWyvULbTP4NyA28nAyQ01bgBqVGTot1kvloZ3XdfRUL9c5O6pDx1h7~WR2tXJgdPgU1TnJRb7L4RByOkzj~tuKmwwpmVIFXlf3a5dSDy~yn0thnFHSRJQ03EsvC3eTDmoawOmual~znWGCaLDkO-nyB~6ttuLXmQaDpro7f0iDbuOqVQWm4SHLg1r4uZPgigvZPklOgLVJ6PyYl6PQ__',
-    'https://s3-alpha-sig.figma.com/img/0404/f946/26a4a2e1c0b5a85c6e08dc70b45bde20?Expires=1741564800&Key-Pair-Id=APKAQ4GOSFWCW27IBOMQ&Signature=Cv7SwThHtmKs6kAvmFlFYie6JTOqZsGdvogIKpfAgMkHaTJ9y6XgYlD7P-PjwqND-m~sQEz9N8tDyWxxLInxeolLTYNpTPUkutN-NpCFih-AT9PxTFju3Dh1mZzI7evtvf5cipkgEcrH0lfo7fY8ATAFG-d3SkP7mUpDmdkhkf~m1QDKwqE0NUQHnVzW03UlWdGsbvH9b8EO8WWyQz9KjF-xTPDqIlpphCtDCoKFQDxDVlGKub4JluWtRnNJwA29gpGX-ZWkutHxz6sqVX5Epvp~z-YyKbk-MKRr7u1i1K6q0xGJP~0HcAuytbbEFtAIdsWFupCTim-ga-Esf-6W0Q__',
+  useEffect(() => {
+    setSelectedImage(null)
+    fetchProperty()
+  }, [propertyId])
 
-  ];
+  const fetchProperty = async () => {
+    try {
+      const response = await axios.get(`/properties/${propertyId}`);
+      setProperty(response.data)
+      setSelectedImage(`${axios.defaults.baseURL}${response.data.images[0]}`)
+    } catch (error) {
+      console.error('Error fetching properties:', error.response?.data?.message || error.message);
+      throw error;
+    }
+  }
 
   const openMap = () => {
     const mapUrl = 'https://www.google.com/maps?q=Bengaluru+Brigade';
@@ -32,71 +38,66 @@ const RoomSpaceScreen = ({ navigation }) => {
       {/* Header Section */}
       <Header navigation={navigation} title="Room Space" />
 
-      <ScrollView style={styles.container}>
+      {property && <ScrollView style={styles.container}>
         {/* Room Space Details */}
         <View >
           {/* Selected Image Container */}
           <View style={styles.imageContainer}>
             <Image style={styles.selectedImage} source={{ uri: selectedImage }} />
             {/* Wishlist Icon over the image */}
-            <TouchableOpacity style={[styles.wishlistIcon,{backgroundColor:colors.secondaryBg}]}>
+            <TouchableOpacity style={[styles.wishlistIcon, { backgroundColor: colors.secondaryBg }]}>
               <Icon name="favorite-border" size={30} color={colors.color} />
             </TouchableOpacity>
             {/* Image Slider */}
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={[styles.imageSlider,{backgroundColor:colors.background}]}>
-              {imageList.map((image, index) => (
-                <TouchableOpacity key={index} onPress={() => setSelectedImage(image)}>
-                  <Image style={styles.sliderImage} source={{ uri: image }} />
+            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={[styles.imageSlider, { backgroundColor: colors.background }]}>
+              {property.images.map((image, index) => (
+                <TouchableOpacity key={index} onPress={() => setSelectedImage(`${axios.defaults.baseURL}/${image}`)}>
+                  <Image style={styles.sliderImage} source={{ uri: `${axios.defaults.baseURL}/${image}` }} />
                 </TouchableOpacity>
               ))}
             </ScrollView>
           </View>
           {/* Room Details */}
           <View style={styles.roomDetails}>
-            <Text style={[styles.roomTitle,{color:colors.color}]}>Bengaluru Brigade</Text>
+            <Text style={[styles.roomTitle, { color: colors.color }]}>{property.title}</Text>
             <View style={styles.locationRow}>
               <Icon name="location-on" size={20} color={colors.secondaryColor} />
-              <Text style={[styles.locationText,{color:colors.secondaryColor}]}>Brigade Road, Bengaluru</Text>
-              <TouchableOpacity style={[styles.mapButton,{borderColor:colors.linkColor}]} onPress={openMap}>
-              <Text style={[styles.mapButtonText,{color:colors.linkColor}]}>Visit Map</Text>
+              <Text style={[styles.locationText, { color: colors.secondaryColor }]}>{property.location}</Text>
+              <TouchableOpacity style={[styles.mapButton, { borderColor: colors.linkColor }]} onPress={openMap}>
+                <Text style={[styles.mapButtonText, { color: colors.linkColor }]}>Visit Map</Text>
               </TouchableOpacity>
             </View>
           </View>
 
           {/* Description Section with Bottom Border */}
           <View style={styles.sectionContainer}>
-            <Text style={[styles.sectionTitle,{color:colors.color}]}>Description</Text>
-            <Text style={[styles.description,{color:colors.secondaryColor}]}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce nec suscipit turpis. Donec efficitur erat id ipsum sollicitudin, id posuere purus fringilla.</Text>
+            <Text style={[styles.sectionTitle, { color: colors.color }]}>Description</Text>
+            <Text style={[styles.description, { color: colors.secondaryColor }]}>{property.description}</Text>
           </View>
 
           {/* Opening Hours Section with Icon */}
           <View style={styles.sectionContainer}>
             <View style={styles.sectionHeader}>
               <Icon name="access-time" size={24} color={colors.color} style={styles.icon} />
-              <Text style={[styles.sectionOpening,{color:colors.color}]}>Opening Hours</Text>
+              <Text style={[styles.sectionOpening, { color: colors.color }]}>Opening Hours</Text>
             </View>
-            <Text style={[styles.openingHours,{color:colors.secondaryColor}]}>8:00 AM - 10:00 PM</Text>
+            <Text style={[styles.openingHours, { color: colors.secondaryColor }]}>8:00 AM - 10:00 PM</Text>
           </View>
 
           {/* Amenities Section */}
           <View style={styles.sectionContainer}>
-            <Text style={[styles.sectionTitle,{color:colors.color}]}>Amenities</Text>
+            <Text style={[styles.sectionTitle, { color: colors.color }]}>Amenities</Text>
             <View style={styles.amenitiesGrid}>
-              <Text style={[styles.amenity,{color:colors.secondaryColor}]}>✓ High-Speed WiFi</Text>
-              <Text style={[styles.amenity,{color:colors.secondaryColor}]}>✓ Projector</Text>
-              <Text style={[styles.amenity,{color:colors.secondaryColor}]}>✓ White Board</Text>
-              <Text style={[styles.amenity,{color:colors.secondaryColor}]}>✓ Air Conditioner</Text>
-              <Text style={[styles.amenity,{color:colors.secondaryColor}]}>✓ Meeting Rooms</Text>
-              <Text style={[styles.amenity,{color:colors.secondaryColor}]}>✓ Coffee Machine</Text>
+              {property.amenities.map((amenity, index) => (<Text style={[styles.amenity, { color: colors.secondaryColor }]}>✓ {amenity}</Text>))}
             </View>
           </View>
-          </View>
-      </ScrollView>
+        </View>
+      </ScrollView>}
 
       {/* Forward Icon (bottom-right corner) */}
       <TouchableOpacity
-        style={[styles.forwardIcon,{backgroundColor:colors.secondaryBg}]}
-        onPress={() => navigation.navigate('CheckInOut')} // Modify with your actual next page
+        style={[styles.forwardIcon, { backgroundColor: colors.secondaryBg }]}
+        onPress={() => navigation.navigate('CheckInOut',{property})} // Modify with your actual next page
       >
         <Icon name="arrow-forward" size={30} color={colors.color} />
       </TouchableOpacity>
@@ -112,7 +113,7 @@ const styles = StyleSheet.create({
     position: 'relative',
     marginBottom: 2,
     justifyContent: 'center',
-    marginVertical:10,
+    marginVertical: 10,
   },
   selectedImage: {
     width: '100%',
@@ -134,7 +135,7 @@ const styles = StyleSheet.create({
     padding: 4,
     borderRadius: 10,
     marginLeft: 5,
-    marginRight:5,
+    marginRight: 5,
   },
   sliderImage: {
     width: 60,
@@ -144,7 +145,7 @@ const styles = StyleSheet.create({
   },
   roomDetails: {
     paddingVertical: 12,
-    paddingHorizontal:10,
+    paddingHorizontal: 10,
   },
   roomTitle: {
     fontSize: 24,
@@ -175,7 +176,7 @@ const styles = StyleSheet.create({
   sectionContainer: {
     marginBottom: 16,
     borderBottomWidth: 1,
-    paddingHorizontal:10,
+    paddingHorizontal: 10,
     borderBottomColor: '#e0e0e0',
     paddingBottom: 16,
   },
@@ -184,14 +185,14 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 8,
     color: '#052659',
-    
+
   },
   sectionOpening: {
     fontSize: 18,
     fontWeight: '600',
     color: '#052659',
-    paddingHorizontal:4
-    
+    paddingHorizontal: 4
+
   },
   description: {
     fontSize: 14,
@@ -206,7 +207,7 @@ const styles = StyleSheet.create({
   //   marginBottom: 6,  // Bottom margin
   //   marginRight: 6,   // Right margin
   // },
-  
+
   openingHours: {
     fontSize: 14,
     color: 'gray',
@@ -231,7 +232,7 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 50,
     elevation: 5,
-    
+
   },
 });
 

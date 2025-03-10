@@ -40,7 +40,6 @@ const UserSignUpScreen = ({navigation,route}) => {
       const response = await axios.post('/user/register', formData);
       Alert.alert('Success', 'Account created successfully!');
       navigation.navigate('LogIn');
-      console.log(response)
     } catch (error) {
       console.log('Error:', error.response?.data || error.message);
       Alert.alert('Error', 'Failed to create account. Please try again.');

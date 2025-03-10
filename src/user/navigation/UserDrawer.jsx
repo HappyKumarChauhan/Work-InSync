@@ -12,6 +12,8 @@ import BookingsScreen from '../screens/Booking/BookingScreen';
 import CheckInOutScreen from '../screens/Booking/CheckInOutScreen';
 import DetailsScreen from '../screens/Booking/DetailsScreen';
 import RoomSpaceScreen from '../screens/Booking/RoomSpaceScreen';
+import GenerateQr from '../screens/GenerateQrScreen';
+import BookingConfirmedScreen from '../screens/Booking/BookingConfirmedScreen';
 
 const Drawer = createDrawerNavigator();
 const CustomDrawerContent = props => {
@@ -134,6 +136,9 @@ const UserDrawer = () => {
       <Drawer.Screen name="RoomSpace" component={RoomSpaceScreen} />
       <Drawer.Screen name="CheckInOut" component={CheckInOutScreen} />
       <Drawer.Screen name="Details" component={DetailsScreen} />
+      <Drawer.Screen name="BookingConfirm" component={BookingConfirmedScreen} />
+      <Drawer.Screen name="GenerateQr" component={GenerateQr} />
+
 
       {/* <Drawer.Screen name="Map" component={ScreenComponent} />
         <Drawer.Screen name="BookingHistory" component={ScreenComponent} />

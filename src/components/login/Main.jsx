@@ -136,7 +136,7 @@ const Main = ({ navigation }) => {
         <Text style={[styles.signUpText, { color: colors.secondaryColor }]}>
           Don't have an account?
         </Text>
-        <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+        <TouchableOpacity onPress={() => navigation.navigate('SignUp',{role:'Normal'})}>
           <Text style={[styles.signUpButtonText, { color: colors.linkColor }]}>
             Sign Up
           </Text>

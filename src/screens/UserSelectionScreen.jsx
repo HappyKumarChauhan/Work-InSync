@@ -19,7 +19,7 @@ const UserSelectionScreen = ({ navigation }) => {
                     
                     <TouchableOpacity
                         style={[styles.button, { backgroundColor: colors.buttonBg }]}
-                        onPress={() => navigation.navigate('UserRegistration',{role:'Normal'})}
+                        onPress={() => navigation.navigate('SignUp',{role:'Normal'})}
                     >
                         <Text style={[styles.buttonText, { color: colors.buttonText }]}>I'm a Normal User</Text>
                         <Icon name="person" size={30} color={colors.buttonText} />
@@ -27,7 +27,7 @@ const UserSelectionScreen = ({ navigation }) => {
                     
                     <TouchableOpacity
                         style={[styles.button, { backgroundColor: colors.buttonBg, marginTop: 20 }]}
-                        onPress={() => navigation.navigate('UserRegistration',{role:'PropertyOwner'})}
+                        onPress={() => navigation.navigate('SignUp',{role:'PropertyOwner'})}
                     >
                         <Text style={[styles.buttonText, { color: colors.buttonText }]}>I'm a Property Owner</Text>
                         <Icon name="business" size={30} color={colors.buttonText} />

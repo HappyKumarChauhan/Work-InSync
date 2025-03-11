@@ -27,7 +27,7 @@ const AppNavigator = () => {
         <Stack.Navigator initialRouteName="Welcome">
           <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false }} />
           <Stack.Screen name="SelectUser" component={UserSelectionScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="UserRegistration" component={UserSignUpScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="SignUp" component={UserSignUpScreen} options={{ headerShown: false }} />
           <Stack.Screen name="LogIn" component={LogInScreen} options={{ headerShown: false }} />
           <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Verification" component={VerificationScreen} options={{ headerShown: false }} />

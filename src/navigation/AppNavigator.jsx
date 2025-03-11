@@ -20,11 +20,11 @@ import { UserContext } from '../context/UserContext';
 const Stack = createStackNavigator();
 
 const AppNavigator = () => {
-  const {role,user}=useContext(UserContext)
-
+  const {role}=useContext(UserContext)
+  
   return (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Welcome">
+        <Stack.Navigator initialRouteName='Welcome'>
           <Stack.Screen name="Welcome" component={WelcomeScreen} options={{ headerShown: false }} />
           <Stack.Screen name="SelectUser" component={UserSelectionScreen} options={{ headerShown: false }} />
           <Stack.Screen name="SignUp" component={UserSignUpScreen} options={{ headerShown: false }} />

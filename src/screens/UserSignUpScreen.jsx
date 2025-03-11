@@ -19,6 +19,7 @@ import LinearGradient from 'react-native-linear-gradient';
 const UserSignUpScreen = ({navigation,route}) => {
   const {role}=route.params;
   const {colors} = useContext(ThemeContext);
+  const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -34,7 +35,41 @@ const UserSignUpScreen = ({navigation,route}) => {
     setFormData({...formData, [field]: value});
   };
 
+  const validateInputs = () => {
+    const newErrors = {};
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email) {
+      newErrors.email = 'Email is required';
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email';
+    }
+
+    // Phone number validation (10 digits)
+    const phoneRegex = /^[0-9]{10}$/;
+    if (!formData.phoneNumber) {
+      newErrors.phoneNumber = 'Phone number is required';
+    } else if (!phoneRegex.test(formData.phoneNumber)) {
+      newErrors.phoneNumber = 'Please enter a valid 10-digit phone number';
+    }
+    // Password validation (minimum 6 characters)
+    if (!formData.password) {
+      newErrors.password = 'Password is required';
+    } else if (formData.password.length < 6) {
+      newErrors.password = 'Password must be at least 6 characters long';
+    }
+
+    setErrors(newErrors);
+
+    // If there are no errors, return true
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSignUp = async () => {
+    if (!validateInputs()) {
+      return;
+    }
     setLoading(true);
     try {
       const response = await axios.post('/user/register', formData);
@@ -127,6 +162,10 @@ const UserSignUpScreen = ({navigation,route}) => {
               onChangeText={text => handleInputChange('email', text)}
             />
           </View>
+          {errors.email && (
+            <Text style={styles.errorText}>{errors.email}</Text>
+          )}
+
           <View
             style={[
               styles.inputContainer,
@@ -142,6 +181,10 @@ const UserSignUpScreen = ({navigation,route}) => {
               onChangeText={text => handleInputChange('phoneNumber', text)}
             />
           </View>
+          {errors.phoneNumber && (
+            <Text style={styles.errorText}>{errors.phoneNumber}</Text>
+          )}
+
           <View
             style={[
               styles.inputContainer,
@@ -168,6 +211,10 @@ const UserSignUpScreen = ({navigation,route}) => {
               />
             </TouchableOpacity>
           </View>
+          {errors.password && (
+            <Text style={styles.errorText}>{errors.password}</Text>
+          )}
+
 
           {/* sign up button  */}
           <PrimaryButton title="Create New Account" handler={handleSignUp} />
@@ -288,17 +335,11 @@ const styles = StyleSheet.create({
     padding: 5,
     opacity: 0.5,
   },
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: 15,
-    width: 310,
-    height: 48,
-    borderRadius: 10,
-  },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: 'bold',
+  errorText: {
+    alignSelf:'flex-start',
+    color: 'red',
+    fontSize: 12,
+    marginTop: -8,
   },
   socialSignUpText: {
     fontSize: 14,

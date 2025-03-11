@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext,useEffect} from 'react';
 import {
   View,
   Text,
@@ -16,6 +16,8 @@ import LinearGradient from 'react-native-linear-gradient';
 import OwnerTabs from './OwnerTabs';
 import PropertyDetailsScreen from '../screens/PropertyDetailsScreen';
 import UploadScreen from '../screens/UploadScreen';
+import {UserContext} from '../../context/UserContext';
+import {useNavigation} from '@react-navigation/native';
 
 const Drawer = createDrawerNavigator();
 
@@ -38,14 +40,17 @@ const CustomDrawerContent = props => {
   return (
     <LinearGradient
       colors={colors.sidePanelBgColors}
-      style={styles.drawerContainer}
-    >
+      style={styles.drawerContainer}>
       {/* Header Section */}
       <View style={styles.drawerHeader}>
-        <TouchableOpacity style={[styles.iconButton,{backgroundColor:colors.iconSecondary}]} onPress={() => props.navigation.navigate('Profile')}>
+        <TouchableOpacity
+          style={[styles.iconButton, {backgroundColor: colors.iconSecondary}]}
+          onPress={() => props.navigation.navigate('Profile')}>
           <Icon name="account-circle" size={30} color="#fff" />
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.iconButton,{backgroundColor:colors.iconSecondary}]} onPress={() => props.navigation.closeDrawer()}>
+        <TouchableOpacity
+          style={[styles.iconButton, {backgroundColor: colors.iconSecondary}]}
+          onPress={() => props.navigation.closeDrawer()}>
           <Icon name="close" size={30} color="#fff" />
         </TouchableOpacity>
       </View>
@@ -53,18 +58,14 @@ const CustomDrawerContent = props => {
       <DrawerContentScrollView
         {...props}
         contentContainerStyle={{gap: 15}}
-        showsVerticalScrollIndicator={false}
-      >
-      
-      <Text style={styles.title}>PwC WorkInSync</Text>
+        showsVerticalScrollIndicator={false}>
+        <Text style={styles.title}>PwC WorkInSync</Text>
 
-      
         {menuItems.map(item => (
           <Pressable
             key={item.screen}
             style={styles.menuItem}
-            onPress={() => props.navigation.navigate(item.screen)}
-          >
+            onPress={() => props.navigation.navigate(item.screen)}>
             <Icon name={item.icon} size={24} color="#fff" />
             <Text style={styles.menuText}>{item.name}</Text>
           </Pressable>
@@ -75,55 +76,56 @@ const CustomDrawerContent = props => {
           <Pressable
             key={item.screen}
             style={styles.menuItem}
-            onPress={() => props.navigation.navigate(item.screen)}
-          >
+            onPress={() => props.navigation.navigate(item.screen)}>
             <Icon name={item.icon} size={22} color="#ccc" />
             <Text style={styles.menuText}>{item.name}</Text>
           </Pressable>
         ))}
-      
-      <View style={styles.divider} />
-      {/* Logout Button */}
-      <Pressable
-        style={styles.menuItem}
-        onPress={() => console.log('Logging out')}
-      >
-        <Icon name="logout" size={24} color="#fff" />
-        <Text style={styles.menuText}>Logout</Text>
-      </Pressable>
-      <View style={styles.menuItem}>
-        <View style={[styles.iconContainer]}>
-          <Icon name="color-lens" size={30} color="white" />
-        </View>
-        <Text style={styles.menuText}>Theme</Text>
-        <TouchableOpacity
-          style={{
-            backgroundColor: 'gray',
-            width: 50,
-            height: 15,
-            alignItems: 'center',
-            borderRadius: 20,
-            flexDirection: 'row',
-            justifyContent: `${theme === 'dark' ? 'flex-end' : 'flex-start'}`,
-          }}
-          onPress={toggleTheme}
-        >
-          <View
+
+        <View style={styles.divider} />
+        {/* Logout Button */}
+        <Pressable
+          style={styles.menuItem}
+          onPress={() => console.log('Logging out')}>
+          <Icon name="logout" size={24} color="#fff" />
+          <Text style={styles.menuText}>Logout</Text>
+        </Pressable>
+        <View style={styles.menuItem}>
+          <View style={[styles.iconContainer]}>
+            <Icon name="color-lens" size={30} color="white" />
+          </View>
+          <Text style={styles.menuText}>Theme</Text>
+          <TouchableOpacity
             style={{
-              height: 20,
-              width: 20,
+              backgroundColor: 'gray',
+              width: 50,
+              height: 15,
+              alignItems: 'center',
               borderRadius: 20,
-              backgroundColor: `${theme === 'dark' ? 'white' : 'black'}`,
+              flexDirection: 'row',
+              justifyContent: `${theme === 'dark' ? 'flex-end' : 'flex-start'}`,
             }}
-          ></View>
-        </TouchableOpacity>
-      </View>
+            onPress={toggleTheme}>
+            <View
+              style={{
+                height: 20,
+                width: 20,
+                borderRadius: 20,
+                backgroundColor: `${theme === 'dark' ? 'white' : 'black'}`,
+              }}></View>
+          </TouchableOpacity>
+        </View>
       </DrawerContentScrollView>
     </LinearGradient>
   );
 };
 
 const OwnerDrawer = () => {
+  const navigation = useNavigation();
+  const {user} = useContext(UserContext);
+  useEffect(() => {
+    if (!user) navigation.replace('LogIn');
+  }, [user]);
   return (
     <Drawer.Navigator
       drawerContent={props => <CustomDrawerContent {...props} />}
@@ -134,12 +136,10 @@ const OwnerDrawer = () => {
           width: '100%',
           backgroundColor: '#1E1E1E',
         },
-      }}
-    >
+      }}>
       <Drawer.Screen name="Home" component={OwnerTabs} />
       <Drawer.Screen name="PropertyDetails" component={PropertyDetailsScreen} />
       <Drawer.Screen name="UploadScreen" component={UploadScreen} />
-      
     </Drawer.Navigator>
   );
 };
@@ -208,7 +208,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 20,
-    paddingTop:20,
+    paddingTop: 20,
     borderTopWidth: 1,
     borderTopColor: 'white',
   },

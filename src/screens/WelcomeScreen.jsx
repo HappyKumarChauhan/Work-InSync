@@ -4,10 +4,18 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import { fonts } from '../styles/fonts';
 import LinearGradient from 'react-native-linear-gradient';
 import ThemeContext from '../theme/ThemeContext';
+import LoadingModal from '../components/LoadingModal';
+import { UserContext } from '../context/UserContext';
 
 const WelcomeScreen = ({ navigation }) => {
-    
     const { colors } = useContext(ThemeContext);
+    const {user,loading}=useContext(UserContext)
+    
+    useEffect(() => {
+      if(user){
+        navigation.replace('Dashboard')
+      }
+    }, [user])
     
     return (
         <ImageBackground
@@ -31,6 +39,7 @@ const WelcomeScreen = ({ navigation }) => {
 
                 </View>
             </LinearGradient>
+            <LoadingModal message='Loading...' visible={loading}/>
         </ImageBackground>
     );
 };

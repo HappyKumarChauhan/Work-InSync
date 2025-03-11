@@ -1,5 +1,5 @@
 import { StyleSheet, Text, View,TouchableOpacity } from 'react-native'
-import React,{useContext} from 'react'
+import React,{useContext, useEffect} from 'react'
 import {
     createDrawerNavigator,
     DrawerContentScrollView,
@@ -14,6 +14,8 @@ import DetailsScreen from '../screens/Booking/DetailsScreen';
 import RoomSpaceScreen from '../screens/Booking/RoomSpaceScreen';
 import GenerateQr from '../screens/GenerateQrScreen';
 import BookingConfirmedScreen from '../screens/Booking/BookingConfirmedScreen';
+import { UserContext } from '../../context/UserContext';
+import { useNavigation } from '@react-navigation/native';
 
 const Drawer = createDrawerNavigator();
 const CustomDrawerContent = props => {
@@ -119,6 +121,11 @@ const CustomDrawerContent = props => {
     );
   };
 const UserDrawer = () => {
+  const navigation=useNavigation()
+  const {user}=useContext(UserContext)
+  useEffect(() => {
+    if(!user) navigation.replace('LogIn')
+  }, [user])
   return (
     <Drawer.Navigator
       drawerContent={props => <CustomDrawerContent {...props} />}
@@ -138,15 +145,6 @@ const UserDrawer = () => {
       <Drawer.Screen name="Details" component={DetailsScreen} />
       <Drawer.Screen name="BookingConfirm" component={BookingConfirmedScreen} />
       <Drawer.Screen name="GenerateQr" component={GenerateQr} />
-
-
-      {/* <Drawer.Screen name="Map" component={ScreenComponent} />
-        <Drawer.Screen name="BookingHistory" component={ScreenComponent} />
-        <Drawer.Screen name="QRCode" component={ScreenComponent} />
-        <Drawer.Screen name="FAQs" component={ScreenComponent} />
-        <Drawer.Screen name="Feedback" component={ScreenComponent} />
-        <Drawer.Screen name="RateApp" component={ScreenComponent} />
-        <Drawer.Screen name="Terms" component={ScreenComponent} /> */}
     </Drawer.Navigator>
   )
 }

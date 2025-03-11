@@ -1,6 +1,5 @@
-import React, {useContext, useState,useEffect} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {
-  ImageBackground,
   View,
   Text,
   TouchableOpacity,
@@ -20,15 +19,17 @@ import {ScrollView} from 'react-native-gesture-handler';
 import LinearGradient from 'react-native-linear-gradient';
 import ThemeContext from '../../theme/ThemeContext';
 import MapView, {Marker} from 'react-native-maps';
-import axios from '../../config/axios'
+import axios from '../../config/axios';
+import LoadingModal from '../../components/LoadingModal';
 
 const Dashboard = ({navigation}) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [mainHeight] = useState(new Animated.Value(300)); // Initial height of the main section
   const [isExpanded, setIsExpanded] = useState(false);
-  const [properties, setProperties] = useState([])
+  const [properties, setProperties] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const {colors,theme} = useContext(ThemeContext);
+  const {colors, theme} = useContext(ThemeContext);
 
   const screenHeight = Dimensions.get('window').height; // Get screen height
   const locations = [
@@ -79,142 +80,147 @@ const Dashboard = ({navigation}) => {
   });
   const darkModeStyle = [
     {
-      "elementType": "geometry",
-      "stylers": [
+      elementType: 'geometry',
+      stylers: [
         {
-          "color": "#212121"
-        }
-      ]
+          color: '#212121',
+        },
+      ],
     },
     {
-      "elementType": "labels.icon",
-      "stylers": [
+      elementType: 'labels.icon',
+      stylers: [
         {
-          "visibility": "off"
-        }
-      ]
+          visibility: 'off',
+        },
+      ],
     },
     {
-      "elementType": "labels.text.fill",
-      "stylers": [
+      elementType: 'labels.text.fill',
+      stylers: [
         {
-          "color": "#757575"
-        }
-      ]
+          color: '#757575',
+        },
+      ],
     },
     {
-      "elementType": "labels.text.stroke",
-      "stylers": [
+      elementType: 'labels.text.stroke',
+      stylers: [
         {
-          "color": "#212121"
-        }
-      ]
+          color: '#212121',
+        },
+      ],
     },
     {
-      "featureType": "road",
-      "elementType": "geometry",
-      "stylers": [
+      featureType: 'road',
+      elementType: 'geometry',
+      stylers: [
         {
-          "color": "#616161"
-        }
-      ]
+          color: '#616161',
+        },
+      ],
     },
     {
-      "featureType": "road",
-      "elementType": "labels.text.fill",
-      "stylers": [
+      featureType: 'road',
+      elementType: 'labels.text.fill',
+      stylers: [
         {
-          "color": "#ffffff"
-        }
-      ]
-    }
+          color: '#ffffff',
+        },
+      ],
+    },
   ];
   const lightModeStyle = [
     {
-      "elementType": "geometry",
-      "stylers": [
+      elementType: 'geometry',
+      stylers: [
         {
-          "color": "rgb(0,0,0)"
-        }
-      ]
+          color: 'rgb(0,0,0)',
+        },
+      ],
     },
     {
-      "elementType": "labels.icon",
-      "stylers": [
+      elementType: 'labels.icon',
+      stylers: [
         {
-          "visibility": "on"
-        }
-      ]
+          visibility: 'on',
+        },
+      ],
     },
     {
-      "elementType": "labels.text.fill",
-      "stylers": [
+      elementType: 'labels.text.fill',
+      stylers: [
         {
-          "color": "#000000"
-        }
-      ]
+          color: '#000000',
+        },
+      ],
     },
     {
-      "elementType": "labels.text.stroke",
-      "stylers": [
+      elementType: 'labels.text.stroke',
+      stylers: [
         {
-          "color": "#ffffff"
-        }
-      ]
+          color: '#ffffff',
+        },
+      ],
     },
     {
-      "featureType": "road",
-      "elementType": "geometry",
-      "stylers": [
+      featureType: 'road',
+      elementType: 'geometry',
+      stylers: [
         {
-          "color": "#e0e0e0"
-        }
-      ]
+          color: '#e0e0e0',
+        },
+      ],
     },
     {
-      "featureType": "road",
-      "elementType": "labels.text.fill",
-      "stylers": [
+      featureType: 'road',
+      elementType: 'labels.text.fill',
+      stylers: [
         {
-          "color": "#000000"
-        }
-      ]
-    }
+          color: '#000000',
+        },
+      ],
+    },
   ];
-    
-  const fetchProperties=async()=>{
+
+  const fetchProperties = async () => {
+    setLoading(true);
     try {
       const response = await axios.get('/properties');
-      setProperties(response.data)
+      setProperties(response.data);
     } catch (error) {
-      console.error('Error fetching properties:', error.response?.data?.message || error.message);
+      console.error(
+        'Error fetching properties:',
+        error.response?.data?.message || error.message,
+      );
       throw error;
+    } finally {
+      setLoading(true);
     }
-  }
-
+  };
   useEffect(() => {
-    fetchProperties()
-  }, [])
-  
+    fetchProperties();
+  }, []);
+
+  if (!properties)
+    return <LoadingModal message="Fetching..." visible={loading} />;
 
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === 'ios' ? 'padding' : null}
-      style={{flex: 1}}
-    >
+      style={{flex: 1}}>
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{flex: 1}}>
           {/* MapView should not contain UI elements */}
           <MapView
-          customMapStyle={theme==='dark' ? darkModeStyle : lightModeStyle}
+            customMapStyle={theme === 'dark' ? darkModeStyle : lightModeStyle}
             style={styles.background}
             initialRegion={{
               latitude: 28.7041, // Default center latitude (change to your needs)
               longitude: 77.1025, // Default center longitude
               latitudeDelta: 0.1,
               longitudeDelta: 0.1,
-            }}
-          >
+            }}>
             {locations.map(location => (
               <Marker
                 key={location.id}
@@ -234,8 +240,7 @@ const Dashboard = ({navigation}) => {
                   styles.topBarButton,
                   {backgroundColor: colors.secondaryBg},
                 ]}
-                onPress={() => navigation.openDrawer()}
-              >
+                onPress={() => navigation.openDrawer()}>
                 <Icon name="menu" size={30} color={colors.color} />
               </TouchableOpacity>
               <TouchableOpacity
@@ -243,8 +248,7 @@ const Dashboard = ({navigation}) => {
                   styles.topBarButton,
                   {backgroundColor: colors.secondaryBg},
                 ]}
-                onPress={() => navigation.navigate('Notification')}
-              >
+                onPress={() => navigation.navigate('Notification')}>
                 <Icon name="notifications" size={30} color={colors.color} />
               </TouchableOpacity>
             </View>
@@ -252,8 +256,7 @@ const Dashboard = ({navigation}) => {
               style={[
                 styles.searchBarTop,
                 {backgroundColor: colors.secondaryBg},
-              ]}
-            >
+              ]}>
               <Icon name="search" size={24} color={colors.color} />
               <TextInput
                 style={styles.searchInputTop}
@@ -268,8 +271,7 @@ const Dashboard = ({navigation}) => {
           <Animated.View style={[styles.main, {height: mainHeight}]}>
             <LinearGradient
               colors={colors.bgGradient}
-              style={styles.gradientView}
-            >
+              style={styles.gradientView}>
               {/* Swipe to Expand */}
               <View style={styles.swipeSection} {...panResponder.panHandlers}>
                 <View style={styles.swipeBar}>
@@ -291,39 +293,50 @@ const Dashboard = ({navigation}) => {
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={styles.scrollContent}
                 keyboardShouldPersistTaps="handled"
-                keyboardDismissMode="on-drag"
-              >
+                keyboardDismissMode="on-drag">
                 <View style={styles.otherContent}>
-                  {properties.map((property, index) => (
-                    <LinearGradient
-                      key={index}
-                      colors={colors.cardBgColors}
-                      style={styles.card}
-                    >
-                      <Image
-                        style={styles.cardImage}
-                        source={{
-                          uri:`${axios.defaults.baseURL}/${property.images[0]}`,
-                        }}
-                      />
-                      <View style={styles.cardContent}>
-                        <Text style={styles.cardTitle}>{property.title}</Text>
-                        <Text style={styles.cardDetails}>INR: {property.price} {property.rentalType}</Text>
-                        <Text style={styles.cardDetails}>
-                          Location: {property.location}
-                        </Text>
-                        <TouchableOpacity
-                          style={[
-                            styles.detailsButton,
-                            {backgroundColor: colors.Details},
-                          ]}
-                          onPress={() => navigation.navigate('RoomSpace',{propertyId:property._id})}
-                        >
-                          <Text style={styles.detailsButtonText}>Details</Text>
-                        </TouchableOpacity>
-                      </View>
-                    </LinearGradient>
-                  ))}
+                  {properties.length === 0 ? (
+                    <Text style={{color:colors.color, textAlign:'center',fontSize:20,marginVertical:10}}>
+                      No properties found
+                    </Text>
+                  ) : (
+                    properties.map((property, index) => (
+                      <LinearGradient
+                        key={index}
+                        colors={colors.cardBgColors}
+                        style={styles.card}>
+                        <Image
+                          style={styles.cardImage}
+                          source={{
+                            uri: `${axios.defaults.baseURL}/${property.images[0]}`,
+                          }}
+                        />
+                        <View style={styles.cardContent}>
+                          <Text style={styles.cardTitle}>{property.title}</Text>
+                          <Text style={styles.cardDetails}>
+                            INR: {property.price} {property.rentalType}
+                          </Text>
+                          <Text style={styles.cardDetails}>
+                            Location: {property.location}
+                          </Text>
+                          <TouchableOpacity
+                            style={[
+                              styles.detailsButton,
+                              {backgroundColor: colors.Details},
+                            ]}
+                            onPress={() =>
+                              navigation.navigate('RoomSpace', {
+                                propertyId: property._id,
+                              })
+                            }>
+                            <Text style={styles.detailsButtonText}>
+                              Details
+                            </Text>
+                          </TouchableOpacity>
+                        </View>
+                      </LinearGradient>
+                    ))
+                  )}
                 </View>
               </ScrollView>
             </LinearGradient>
@@ -435,7 +448,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     borderRadius: 15,
     paddingVertical: 24,
-    paddingHorizontal:20,
+    paddingHorizontal: 20,
     marginVertical: 12,
     height: 210,
   },

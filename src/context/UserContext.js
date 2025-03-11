@@ -8,7 +8,7 @@ export const UserContext = createContext();
 // Provider Component
 export const UserProvider = ({children}) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [profilePicture, setProfilePicture] = useState(null)
   const [role, setRole] = useState('Normal')
 
@@ -25,6 +25,8 @@ export const UserProvider = ({children}) => {
       console.log(profilePicture);
     } catch (error) {
       console.log(error);
+    } finally{
+      setLoading(false)
     }
   };
 

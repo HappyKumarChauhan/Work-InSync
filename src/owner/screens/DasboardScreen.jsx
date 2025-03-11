@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext,useEffect} from 'react';
 import {
   View,
   Text,
@@ -6,15 +6,38 @@ import {
   FlatList,
   StyleSheet,
   Platform,
+  Alert
 } from 'react-native';
 import Card from '../components/Card';
 import CardTwo from '../components/CardTwo';
 import ThemeContext from '../../theme/ThemeContext';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import axios from '../../config/axios'
+import LoadingModal from '../../components/LoadingModal'
 
 const DashboardScreen = ({navigation}) => {
   const {colors} = useContext(ThemeContext);
   const [activeTab, setActiveTab] = useState('Upcoming');
+  const [myProperties, setMyProperties] = useState(null)
+  const [loading, setLoading] = useState(false)
+
+  const fetchProperties=async()=>{
+    setLoading(true)
+    try{
+      const response=await axios.get('properties/my-properties')
+      setMyProperties(response.data)
+      console.log(response.data)
+    }catch(error){
+      console.log(error)
+      Alert.alert('Something went wrong', error.response?.data?.message || 'Something went wrong.');
+    }finally{
+      setLoading(false)
+    }
+  }
+  useEffect(() => {
+    fetchProperties()
+  }, [])
+  
 
   const upcomingData = [
     {id: '1', title: 'Bengaluru Brigade', desk: 'BM-8F-WS-26-2nd Floor'},
@@ -23,10 +46,7 @@ const DashboardScreen = ({navigation}) => {
     {id: '4', title: 'Bengaluru Brigade', desk: 'BM-8F-WS-26-2nd Floor'},
   ];
 
-  const myListData = [
-    {id: '1', title: 'Reserved Space', desk: 'RM-5A-WS-12-3rd Floor'},
-    {id: '2', title: 'Reserved Space', desk: 'RM-5A-WS-12-3rd Floor'},
-  ];
+  if (!myProperties) return (<LoadingModal message="Fetching Properties..." visible={loading} />)
 
   return (
     <View style={[styles.container, {backgroundColor: colors.background}]}>
@@ -76,13 +96,13 @@ const DashboardScreen = ({navigation}) => {
       </View>
 
       <FlatList
-        data={activeTab === 'Upcoming' ? upcomingData : myListData}
-        keyExtractor={item => item.id}
+        data={activeTab === 'Upcoming' ? upcomingData : myProperties}
+        keyExtractor={item => item._id}
         renderItem={({item}) =>
           activeTab === 'Upcoming' ? (
             <Card title={item.title} desk={item.desk} />
           ) : (
-            <CardTwo title={item.title} desk={item.desk} />
+            <CardTwo key={item._id} data={item} />
           )
         }
         contentContainerStyle={{padding: 10}}

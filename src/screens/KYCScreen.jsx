@@ -1,9 +1,10 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, Image,Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ThemeContext from '../theme/ThemeContext';
 import Header from '../components/Header';
 import CameraModal from '../components/CameraModal';
+import axios from '../config/axios'
 import LoadingModal from '../components/LoadingModal';
 
 const KYCDetailsScreen = ({ navigation }) => {
@@ -62,7 +63,7 @@ const KYCDetailsScreen = ({ navigation }) => {
                 {/* Identity Type Options */}
                 <Text style={[styles.sectionTitle, { color: colors.color }]}>Choose Your Identity Type</Text>
                 <View style={styles.identityOptions}>
-                    {idTypes.map((id,index)=>(<TouchableOpacity onPress={()=>{setSelectedIdType(id)}} style={[styles.identityButton, { backgroundColor: selectedIdType===id?'#000':colors.secondaryBg, borderColor: colors.secondaryColor }]}>
+                    {idTypes.map((id,index)=>(<TouchableOpacity onPress={()=>{setSelectedIdType(id)}} style={[styles.identityButton, { backgroundColor: selectedIdType===id?'green':colors.secondaryBg, borderColor: colors.secondaryColor }]}>
                         <Text style={[styles.identityButtonText, { color: colors.secondaryColor }]}>{id}</Text>
                     </TouchableOpacity>))}
                     

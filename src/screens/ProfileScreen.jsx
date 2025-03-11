@@ -134,11 +134,11 @@ const ProfileScreen = ({navigation}) => {
         <View style={styles.profileIcon}>
             {user?(<Image
             source={{uri: profilePicture}}
-            style={{width: 100, height: 100, borderRadius: 50}}
+            style={{width: 100, height: 100, borderRadius: 50,borderWidth:2,borderColor:colors.color}}
           />):(<Icon name="account-circle" color={colors.color} size={90} />)}
           
           <TouchableOpacity
-            style={styles.cameraIcon}
+            style={[styles.cameraIcon,{backgroundColor:colors.background,borderColor:colors.color}]}
             onPress={() => setModalVisible(true)}
           >
             <Icon name="photo-camera" size={20} color={colors.color} />
@@ -284,6 +284,7 @@ const styles = StyleSheet.create({
   cameraIcon: {
     backgroundColor: 'black',
     borderRadius: 10,
+    borderWidth:0.5,
     padding: 3,
     position: 'absolute',
     bottom: 5,

@@ -12,6 +12,7 @@ import {
 import { Camera, useCameraDevices } from "react-native-vision-camera";
 import { request, PERMISSIONS, RESULTS } from "react-native-permissions";
 import LinearGradient from "react-native-linear-gradient";
+import {Image as Image2} from 'react-native-compressor'
 
 const CameraModal = ({ visible, onClose, onCapture, mode }) => {
     const [hasPermission, setHasPermission] = useState(false);
@@ -47,7 +48,14 @@ const CameraModal = ({ visible, onClose, onCapture, mode }) => {
         if (cameraRef.current) {
             try {
                 const photo = await cameraRef.current.takePhoto();
-                setPhoto(photo);
+                // Compress and resize the image before saving
+            const compressedImage = await Image2.compress(`file://${photo.path}`, {
+                compressionMethod: "auto",  // Best balance between size and quality
+                maxWidth: 1000,             // Reduce width (auto scales height)
+                maxHeight: 1000,            // Reduce height (auto scales width)
+                quality: 0.7,               // Reduce quality (0.7 = 70%)
+            });
+            setPhoto({ path: compressedImage });
             } catch (error) {
                 console.error("Error taking photo:", error);
             }

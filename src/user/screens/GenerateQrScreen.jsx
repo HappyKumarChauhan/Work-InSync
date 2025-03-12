@@ -36,7 +36,7 @@ const GenerateQr = ({navigation}) => {
   };
   useEffect(() => {
     fetchAllBookings();
-  }, []);
+  });
 
   if (!myBookings)
     return <LoadingModal message="Fetching..." visible={loading} />;
@@ -53,10 +53,10 @@ const GenerateQr = ({navigation}) => {
             style={{
               color: colors.color,
               textAlign: 'center',
-              fontSize: 20,
+              fontSize: 15,
               marginVertical: 10,
             }}>
-            No properties found
+            No booking found
           </Text>
         ) : (
           myBookings.map((booking, index) => (

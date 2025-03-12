@@ -13,6 +13,7 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import {ScrollView} from 'react-native-gesture-handler';
@@ -189,11 +190,10 @@ const Dashboard = ({navigation}) => {
       const response = await axios.get('/properties');
       setProperties(response.data);
     } catch (error) {
-      console.error(
+      Alert.alert(
         'Error fetching properties:',
         error.response?.data?.message || error.message,
       );
-      throw error;
     } finally {
       setLoading(true);
     }
@@ -296,8 +296,8 @@ const Dashboard = ({navigation}) => {
                 keyboardDismissMode="on-drag">
                 <View style={styles.otherContent}>
                   {properties.length === 0 ? (
-                    <Text style={{color:colors.color, textAlign:'center',fontSize:20,marginVertical:10}}>
-                      No properties found
+                    <Text style={{color:colors.color, textAlign:'center',fontSize:15,marginVertical:10}}>
+                      No property found
                     </Text>
                   ) : (
                     properties.map((property, index) => (
@@ -484,15 +484,6 @@ const styles = StyleSheet.create({
   detailsButtonText: {
     color: '#000000',
     fontWeight: 'bold',
-  },
-  sidebar: {
-    position: 'absolute',
-    height: '100%',
-    backgroundColor: '#0C1922',
-    zIndex: 10,
-  },
-  otherContent: {
-    // padding: 20,
   },
 });
 

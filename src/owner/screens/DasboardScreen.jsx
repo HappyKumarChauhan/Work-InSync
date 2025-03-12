@@ -1,4 +1,4 @@
-import React, {useState, useContext,useEffect} from 'react';
+import React, {useState, useContext, useEffect} from 'react';
 import {
   View,
   Text,
@@ -6,38 +6,40 @@ import {
   FlatList,
   StyleSheet,
   Platform,
-  Alert
+  Alert,
 } from 'react-native';
 import Card from '../components/Card';
 import CardTwo from '../components/CardTwo';
 import ThemeContext from '../../theme/ThemeContext';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import axios from '../../config/axios'
-import LoadingModal from '../../components/LoadingModal'
+import axios from '../../config/axios';
+import LoadingModal from '../../components/LoadingModal';
 
 const DashboardScreen = ({navigation}) => {
   const {colors} = useContext(ThemeContext);
   const [activeTab, setActiveTab] = useState('Upcoming');
-  const [myProperties, setMyProperties] = useState(null)
-  const [loading, setLoading] = useState(false)
+  const [myProperties, setMyProperties] = useState(null);
+  const [loading, setLoading] = useState(false);
 
-  const fetchProperties=async()=>{
-    setLoading(true)
-    try{
-      const response=await axios.get('properties/my-properties')
-      setMyProperties(response.data)
-      console.log(response.data)
-    }catch(error){
-      console.log(error)
-      Alert.alert('Something went wrong', error.response?.data?.message || 'Something went wrong.');
-    }finally{
-      setLoading(false)
+  const fetchProperties = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get('properties/my-properties');
+      setMyProperties(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+      Alert.alert(
+        'Something went wrong',
+        error.response?.data?.message || 'Something went wrong.',
+      );
+    } finally {
+      setLoading(false);
     }
-  }
+  };
   useEffect(() => {
-    fetchProperties()
-  }, [])
-  
+    fetchProperties();
+  }, []);
 
   const upcomingData = [
     {id: '1', title: 'Bengaluru Brigade', desk: 'BM-8F-WS-26-2nd Floor'},
@@ -46,15 +48,15 @@ const DashboardScreen = ({navigation}) => {
     {id: '4', title: 'Bengaluru Brigade', desk: 'BM-8F-WS-26-2nd Floor'},
   ];
 
-  if (!myProperties) return (<LoadingModal message="Fetching Properties..." visible={loading} />)
+  if (!myProperties)
+    return <LoadingModal message="Fetching Properties..." visible={loading} />;
 
   return (
     <View style={[styles.container, {backgroundColor: colors.background}]}>
       <View style={styles.header}>
         <TouchableOpacity
           onPress={() => navigation.openDrawer()}
-          style={[styles.iconButton, {backgroundColor: colors.secondaryBg}]}
-        >
+          style={[styles.iconButton, {backgroundColor: colors.secondaryBg}]}>
           <Icon name="menu" size={30} color={colors.color} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, {color: colors.color}]}>
@@ -62,8 +64,7 @@ const DashboardScreen = ({navigation}) => {
         </Text>
         <TouchableOpacity
           onPress={() => navigation.navigate('Notifications')}
-          style={[styles.iconButton, {backgroundColor: colors.secondaryBg}]}
-        >
+          style={[styles.iconButton, {backgroundColor: colors.secondaryBg}]}>
           <Icon name="notifications" size={30} color={colors.color} />
         </TouchableOpacity>
       </View>
@@ -77,8 +78,7 @@ const DashboardScreen = ({navigation}) => {
               borderBottomWidth: 2,
             },
           ]}
-          onPress={() => setActiveTab('Upcoming')}
-        >
+          onPress={() => setActiveTab('Upcoming')}>
           <Text style={[styles.tabText, {color: colors.color}]}>Upcoming</Text>
         </TouchableOpacity>
         <TouchableOpacity
@@ -89,31 +89,42 @@ const DashboardScreen = ({navigation}) => {
               borderBottomWidth: 2,
             },
           ]}
-          onPress={() => setActiveTab('My List')}
-        >
+          onPress={() => setActiveTab('My List')}>
           <Text style={[styles.tabText, {color: colors.color}]}>My List</Text>
         </TouchableOpacity>
       </View>
 
-      <FlatList
-        data={activeTab === 'Upcoming' ? upcomingData : myProperties}
-        keyExtractor={item => item._id}
-        renderItem={({item}) =>
-          activeTab === 'Upcoming' ? (
-            <Card title={item.title} desk={item.desk} />
-          ) : (
-            <CardTwo key={item._id} data={item} />
-          )
-        }
-        contentContainerStyle={{padding: 10}}
-      />
+      {activeTab === 'Upcoming' ? (
+        <FlatList
+          data={upcomingData}
+          keyExtractor={item => item._id}
+          renderItem={({item}) => <Card title={item.title} desk={item.desk} />}
+          contentContainerStyle={{padding: 10}}
+        />
+      ) : (
+        myProperties.length===0?(<Text
+          style={{
+            color: colors.color,
+            textAlign: 'center',
+            fontSize: 15,
+            marginVertical: 10,
+          }}>
+          No property listed
+        </Text>):(<FlatList
+          data={myProperties}
+          keyExtractor={item => item._id}
+          renderItem={({item}) => <CardTwo key={item._id} data={item} />}
+          contentContainerStyle={{padding: 10}}
+        />)
+      )}
       <TouchableOpacity
         style={[
           styles.addPropertyButton,
           {backgroundColor: colors.cardBgColors[0]},
         ]}
-        onPress={()=>{navigation.navigate('PropertyDetails')}}
-      >
+        onPress={() => {
+          navigation.navigate('PropertyDetails');
+        }}>
         <Icon name="add" color="#ffffff" size={30} />
       </TouchableOpacity>
     </View>

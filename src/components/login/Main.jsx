@@ -55,8 +55,9 @@ const Main = ({navigation}) => {
     return Object.keys(newErrors).length === 0;
   };
   const handleLogin = async () => {
-    validateInputs();
-
+    if (!validateInputs()) {
+      return;
+    }
     setLoading(true); // Show loading modal
 
     try {

@@ -34,12 +34,36 @@ const BookingConfirmedScreen = ({ route }) => {
     const options = { day: '2-digit', month: 'long', year: 'numeric' };
     return date.toLocaleDateString('en-GB', options);
   };
+  const cancelBooking=async()=>{
+    setLoading(true)
+    try {
+      const response = await axios.put(`/booking/${bookingId}/cancel`);
+      Alert.alert("Success", "Your booking has been cancelled.");
+      fetchBookingDetails()
+      // Show a success message or refresh UI
+    } catch (error) {
+      console.error("Error cancelling order:", error);
+      Alert.alert("Error", "Failed to cancel the order. Please try again.");
+    }finally{
+      setLoading(false)
+    }
+  }
+  const confirmCancellation=()=>{
+    Alert.alert(
+      "Confirm Booking",
+      "Are you sure you want to cancel this booking?",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "OK", onPress: () => cancelBooking() }
+      ]
+    );
+  }
 
   if (!booking) return (<LoadingModal message="" visible={loading} />)
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
-      <Header navigation={navigation} title="Booking Confirmed" />
+      <Header navigation={navigation} title="Booking Details" />
       <View style={styles.imageDetailsContainer}>
         <Image
           style={styles.image}
@@ -67,9 +91,11 @@ const BookingConfirmedScreen = ({ route }) => {
       </View>
 
       <View style={styles.confirmationMessage}>
-        <Text style={[styles.confirmationText, { color: colors.color }]}>Your booking has been confirmed successfully!</Text>
+        <Text style={[styles.confirmationText, { color: colors.color }]}>Your booking has been {booking.status==='Cancelled'?'cancelled':'confirmed'}.</Text>
       </View>
-      <QRCode
+      {booking.status!=='Cancelled'&&(
+        <View>
+        <QRCode
         value={JSON.stringify({
           bookingId: booking._id,
           startDate: booking.startDate,
@@ -79,11 +105,18 @@ const BookingConfirmedScreen = ({ route }) => {
         color="black" // QR code color
         backgroundColor="white" // Background color
       />
-      <TouchableOpacity
-        style={[styles.continueButton, { backgroundColor: colors.buttonBg }]}
-        onPress={() => navigation.navigate('Home')}>
-        <Text style={[styles.continueButtonText, { color: colors.buttonText }]}>Go to Home</Text>
+      <TouchableOpacity style={styles.button} onPress={confirmCancellation}>
+        <Text style={[styles.buttonText,{color:colors.buttonText}]}>Cancel Booking</Text>
       </TouchableOpacity>
+      </View>
+      )}
+      
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: colors.buttonBg }]}
+        onPress={() => navigation.navigate('Home')}>
+        <Text style={[styles.buttonText, { color: colors.buttonText }]}>Go to Home</Text>
+      </TouchableOpacity>
+      <LoadingModal message='' visible={loading}/>
     </View>
   );
 };
@@ -140,16 +173,17 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
   },
-  continueButton: {
+  button:{
+    backgroundColor:'red',
     paddingVertical: 10,
     marginHorizontal: 'auto',
-    borderRadius: 10,
+    borderRadius: 5,
     alignItems: 'center',
     justifyContent: 'center',
-    marginVertical:30,
+    marginVertical:10,
     width: 150,
   },
-  continueButtonText: {
+  buttonText: {
     fontSize: 18,
     fontWeight: '600',
   },

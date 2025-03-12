@@ -16,6 +16,7 @@ const WelcomeScreen = ({ navigation }) => {
         navigation.replace('Dashboard')
       }
     }, [user])
+    if (!user) return (<LoadingModal message='' visible={loading}/>)
     
     return (
         <ImageBackground
@@ -39,7 +40,6 @@ const WelcomeScreen = ({ navigation }) => {
 
                 </View>
             </LinearGradient>
-            <LoadingModal message='Loading...' visible={loading}/>
         </ImageBackground>
     );
 };

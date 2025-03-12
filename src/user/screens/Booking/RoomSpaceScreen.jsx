@@ -1,106 +1,188 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView, Linking } from 'react-native';
+ import React, {useContext, useState, useEffect} from 'react';
+import {
+  View,
+  Text,
+  Image,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  Linking,
+  Alert,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ThemeContext from '../../../theme/ThemeContext';
 import Header from '../../../components/Header';
-import axios from '../../../config/axios'
+import axios from '../../../config/axios';
+import LoadingModal from '../../../components/LoadingModal';
 
-
-const RoomSpaceScreen = ({ navigation, route }) => {
-  const [property, setProperty] = useState(null)
-  const { propertyId } = route.params;
-  const { colors } = useContext(ThemeContext)
+const RoomSpaceScreen = ({navigation, route}) => {
+  const [loading, setLoading] = useState(false);
+  const [property, setProperty] = useState(null);
+  const {propertyId} = route.params;
+  const {colors} = useContext(ThemeContext);
   const [selectedImage, setSelectedImage] = useState(null);
 
   useEffect(() => {
-    setSelectedImage(null)
-    fetchProperty()
-  }, [propertyId])
+    setSelectedImage(null);
+    fetchProperty();
+  }, [propertyId]);
 
   const fetchProperty = async () => {
+    setLoading(true);
     try {
       const response = await axios.get(`/properties/${propertyId}`);
-      setProperty(response.data)
-      setSelectedImage(`${axios.defaults.baseURL}${response.data.images[0]}`)
+      setProperty(response.data);
+      setSelectedImage(`${axios.defaults.baseURL}${response.data.images[0]}`);
+      console.log(response.data);
     } catch (error) {
-      console.error('Error fetching properties:', error.response?.data?.message || error.message);
-      throw error;
+      Alert.alert(
+        'Error fetching properties:',
+        error.response?.data?.message || error.message,
+      );
+    } finally {
+      setLoading(false);
     }
-  }
+  };
+
+  const toggleWishlist = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.post('/wishlist/toggle', {propertyId});
+      fetchProperty()
+    } catch (error) {
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const openMap = () => {
     const mapUrl = 'https://www.google.com/maps?q=Bengaluru+Brigade';
     Linking.openURL(mapUrl);
   };
 
+  if (!property) return <LoadingModal message="" visible={loading} />;
+
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background }}> {/* White background for the whole page */}
+    <View style={{flex: 1, backgroundColor: colors.background}}>
       {/* Header Section */}
       <Header navigation={navigation} title="Room Space" />
-
-      {property && <ScrollView style={styles.container}>
+      <ScrollView style={styles.container}>
         {/* Room Space Details */}
-        <View >
+        <View>
           {/* Selected Image Container */}
           <View style={styles.imageContainer}>
-            <Image style={styles.selectedImage} source={{ uri: selectedImage }} />
+            <Image style={styles.selectedImage} source={{uri: selectedImage}} />
             {/* Wishlist Icon over the image */}
-            <TouchableOpacity style={[styles.wishlistIcon, { backgroundColor: colors.secondaryBg }]}>
-              <Icon name="favorite-border" size={30} color={colors.color} />
+            <TouchableOpacity
+              onPress={toggleWishlist}
+              style={[
+                styles.wishlistIcon,
+                {backgroundColor: colors.secondaryBg},
+              ]}>
+              {property.isInWishlist ? (
+                <Icon name="favorite" size={30} color='red' />
+              ) : (
+                <Icon name="favorite-border" size={30} color={colors.color} />
+              )}
             </TouchableOpacity>
             {/* Image Slider */}
-            <ScrollView horizontal showsHorizontalScrollIndicator={false} style={[styles.imageSlider, { backgroundColor: colors.background }]}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              style={[
+                styles.imageSlider,
+                {backgroundColor: colors.background},
+              ]}>
               {property.images.map((image, index) => (
-                <TouchableOpacity key={index} onPress={() => setSelectedImage(`${axios.defaults.baseURL}/${image}`)}>
-                  <Image style={styles.sliderImage} source={{ uri: `${axios.defaults.baseURL}/${image}` }} />
+                <TouchableOpacity
+                  key={index}
+                  onPress={() =>
+                    setSelectedImage(`${axios.defaults.baseURL}/${image}`)
+                  }>
+                  <Image
+                    style={styles.sliderImage}
+                    source={{uri: `${axios.defaults.baseURL}/${image}`}}
+                  />
                 </TouchableOpacity>
               ))}
             </ScrollView>
           </View>
           {/* Room Details */}
           <View style={styles.roomDetails}>
-            <Text style={[styles.roomTitle, { color: colors.color }]}>{property.title}</Text>
+            <Text style={[styles.roomTitle, {color: colors.color}]}>
+              {property.title}
+            </Text>
             <View style={styles.locationRow}>
-              <Icon name="location-on" size={20} color={colors.secondaryColor} />
-              <Text style={[styles.locationText, { color: colors.secondaryColor }]}>{property.location}</Text>
-              <TouchableOpacity style={[styles.mapButton, { borderColor: colors.linkColor }]} onPress={openMap}>
-                <Text style={[styles.mapButtonText, { color: colors.linkColor }]}>Visit Map</Text>
+              <Icon
+                name="location-on"
+                size={20}
+                color={colors.secondaryColor}
+              />
+              <Text
+                style={[styles.locationText, {color: colors.secondaryColor}]}>
+                {property.location}
+              </Text>
+              <TouchableOpacity
+                style={[styles.mapButton, {borderColor: colors.linkColor}]}
+                onPress={openMap}>
+                <Text style={[styles.mapButtonText, {color: colors.linkColor}]}>
+                  Visit Map
+                </Text>
               </TouchableOpacity>
             </View>
           </View>
 
           {/* Description Section with Bottom Border */}
           <View style={styles.sectionContainer}>
-            <Text style={[styles.sectionTitle, { color: colors.color }]}>Description</Text>
-            <Text style={[styles.description, { color: colors.secondaryColor }]}>{property.description}</Text>
+            <Text style={[styles.sectionTitle, {color: colors.color}]}>
+              Description
+            </Text>
+            <Text style={[styles.description, {color: colors.secondaryColor}]}>
+              {property.description}
+            </Text>
           </View>
 
           {/* Opening Hours Section with Icon */}
           <View style={styles.sectionContainer}>
             <View style={styles.sectionHeader}>
-              <Icon name="access-time" size={24} color={colors.color} style={styles.icon} />
-              <Text style={[styles.sectionOpening, { color: colors.color }]}>Opening Hours</Text>
+              <Icon
+                name="access-time"
+                size={24}
+                color={colors.color}
+                style={styles.icon}
+              />
+              <Text style={[styles.sectionOpening, {color: colors.color}]}>
+                Opening Hours
+              </Text>
             </View>
-            <Text style={[styles.openingHours, { color: colors.secondaryColor }]}>8:00 AM - 10:00 PM</Text>
+            <Text style={[styles.openingHours, {color: colors.secondaryColor}]}>
+              8:00 AM - 10:00 PM
+            </Text>
           </View>
 
           {/* Amenities Section */}
           <View style={styles.sectionContainer}>
-            <Text style={[styles.sectionTitle, { color: colors.color }]}>Amenities</Text>
+            <Text style={[styles.sectionTitle, {color: colors.color}]}>
+              Amenities
+            </Text>
             <View style={styles.amenitiesGrid}>
-              {property.amenities.map((amenity, index) => (<Text style={[styles.amenity, { color: colors.secondaryColor }]}>✓ {amenity}</Text>))}
+              {property.amenities.map((amenity, index) => (
+                <Text style={[styles.amenity, {color: colors.secondaryColor}]}>
+                  ✓ {amenity}
+                </Text>
+              ))}
             </View>
           </View>
         </View>
-      </ScrollView>}
-
+      </ScrollView>
       {/* Forward Icon (bottom-right corner) */}
       <TouchableOpacity
-        style={[styles.forwardIcon, { backgroundColor: colors.secondaryBg }]}
-        onPress={() => navigation.navigate('CheckInOut',{property})} // Modify with your actual next page
+        style={[styles.forwardIcon, {backgroundColor: colors.secondaryBg}]}
+        onPress={() => navigation.navigate('CheckInOut', {property})} // Modify with your actual next page
       >
         <Icon name="arrow-forward" size={30} color={colors.color} />
       </TouchableOpacity>
+      <LoadingModal message="" visible={loading} />
     </View>
   );
 };
@@ -131,7 +213,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     position: 'absolute',
     bottom: 5,
-    backgroundColor: "white",
+    backgroundColor: 'white',
     padding: 4,
     borderRadius: 10,
     marginLeft: 5,
@@ -185,14 +267,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginBottom: 8,
     color: '#052659',
-
   },
   sectionOpening: {
     fontSize: 18,
     fontWeight: '600',
     color: '#052659',
-    paddingHorizontal: 4
-
+    paddingHorizontal: 4,
   },
   description: {
     fontSize: 14,
@@ -201,7 +281,6 @@ const styles = StyleSheet.create({
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-
   },
   // icon: {
   //   marginBottom: 6,  // Bottom margin
@@ -232,7 +311,6 @@ const styles = StyleSheet.create({
     padding: 8,
     borderRadius: 50,
     elevation: 5,
-
   },
 });
 

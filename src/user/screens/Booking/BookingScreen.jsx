@@ -1,6 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, Pressable } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';  // Import Material Icons
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import CompletedBookings from '../../components/bookings/CompletedBookings';
 import CancelledBookings from '../../components/bookings/CancelledBookings';
 import UpcomingBookings from '../../components/bookings/UpcomingBookings';

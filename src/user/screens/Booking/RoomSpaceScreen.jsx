@@ -33,7 +33,6 @@ const RoomSpaceScreen = ({navigation, route}) => {
       const response = await axios.get(`/properties/${propertyId}`);
       setProperty(response.data);
       setSelectedImage(`${axios.defaults.baseURL}${response.data.images[0]}`);
-      console.log(response.data);
     } catch (error) {
       Alert.alert(
         'Error fetching properties:',
@@ -167,7 +166,7 @@ const RoomSpaceScreen = ({navigation, route}) => {
             </Text>
             <View style={styles.amenitiesGrid}>
               {property.amenities.map((amenity, index) => (
-                <Text style={[styles.amenity, {color: colors.secondaryColor}]}>
+                <Text key={index} style={[styles.amenity, {color: colors.secondaryColor}]}>
                   ✓ {amenity}
                 </Text>
               ))}

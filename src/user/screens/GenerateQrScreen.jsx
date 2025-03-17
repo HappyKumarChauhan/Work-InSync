@@ -13,16 +13,17 @@ import ThemeContext from '../../theme/ThemeContext';
 import Header from '../../components/Header';
 import axios from '../../config/axios';
 import LoadingModal from '../../components/LoadingModal';
+import UpcomingBookings from '../components/bookings/UpcomingBookings';
 
 const GenerateQr = ({navigation}) => {
   const [myBookings, setMyBookings] = useState(null);
   const {colors} = useContext(ThemeContext);
   const [loading, setLoading] = useState(false);
 
-  const fetchAllBookings = async () => {
+  const fetchBookings = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`/booking/my-bookings`);
+      const response = await axios.get(`/booking/upcoming`);
       setMyBookings(response.data);
     } catch (error) {
       console.log(error);
@@ -35,7 +36,7 @@ const GenerateQr = ({navigation}) => {
     }
   };
   useEffect(() => {
-    fetchAllBookings();
+    fetchBookings();
   });
 
   if (!myBookings)
@@ -47,54 +48,7 @@ const GenerateQr = ({navigation}) => {
       {/* White background for the whole page */}
       {/* Header Section */}
       <Header navigation={navigation} title="GenerateQr" />
-      <ScrollView style={styles.cardsContainer}>
-        {myBookings.length === 0 ? (
-          <Text
-            style={{
-              color: colors.color,
-              textAlign: 'center',
-              fontSize: 15,
-              marginVertical: 10,
-            }}>
-            No booking found
-          </Text>
-        ) : (
-          myBookings.map((booking, index) => (
-            <LinearGradient
-              key={index}
-              colors={colors.cardBgColors}
-              style={styles.card}
-              start={{x: 1, y: 0}} // Start gradient from right
-              end={{x: 0, y: 0}} // End gradient at left
-            >
-              <Image
-                style={{width: 120, height: 120, borderRadius: 10}}
-                source={{
-                  uri: `${axios.defaults.baseURL}/${booking.property.images[0]}`,
-                }}
-              />
-              <View style={styles.cardDescription}>
-                <Text style={styles.cardTitle}>{booking.property.title}</Text>
-                <Text style={styles.cardContent}>
-                  Location: {booking.property.location}
-                </Text>
-                <Text style={styles.cardContent}>
-                  Start Date: {booking.startDate}
-                </Text>
-                <TouchableOpacity
-                  style={[styles.cardButton, {backgroundColor: colors.Details}]}
-                  onPress={() =>
-                    navigation.navigate('BookingConfirm', {
-                      bookingId: booking._id,
-                    })
-                  }>
-                  <Text>View Details</Text>
-                </TouchableOpacity>
-              </View>
-            </LinearGradient>
-          ))
-        )}
-      </ScrollView>
+      <UpcomingBookings/>
     </View>
   );
 };

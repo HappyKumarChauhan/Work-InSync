@@ -56,8 +56,12 @@ const UserSignUpScreen = ({navigation,route}) => {
     // Password validation (minimum 6 characters)
     if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters long';
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters long';
+    } else if (!/[A-Z]/.test(formData.password)) {
+      newErrors.password = 'Password must contain at least one uppercase letter';
+    } else if (!/\d/.test(formData.password)) {
+      newErrors.password = 'Password must contain at least one number';
     }
 
     setErrors(newErrors);
@@ -108,26 +112,7 @@ const UserSignUpScreen = ({navigation,route}) => {
       style={styles.background}
     >
       <View style={styles.overlay}>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'flex-end',
-            padding: 10,
-          }}
-        >
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('Dashboard');
-            }}
-            style={{backgroundColor: 'gray', borderRadius: 5, marginRight: 5}}
-          >
-            <Icon
-              name="keyboard-double-arrow-right"
-              size={30}
-              color={'black'}
-            />
-          </TouchableOpacity>
-        </View>
+        
         <LinearGradient colors={colors.bgGradient} style={[styles.main]}>
           <Text style={[styles.title, {color: colors.color}]}>
             Sign Up
@@ -176,6 +161,7 @@ const UserSignUpScreen = ({navigation,route}) => {
             <TextInput
               style={[styles.input, {color: colors.color}]}
               placeholderTextColor={colors.secondaryColor}
+              keyboardType="numeric"
               placeholder="Phone"
               value={formData.phoneNumber}
               onChangeText={text => handleInputChange('phoneNumber', text)}
@@ -298,7 +284,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     backgroundColor: 'rgba(12, 25, 34, 0.6)',
   },
   main: {

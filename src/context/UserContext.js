@@ -8,17 +8,27 @@ export const UserContext = createContext();
 // Provider Component
 export const UserProvider = ({children}) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
   const [profilePicture, setProfilePicture] = useState(null);
   const [role, setRole] = useState('Normal');
+  const [loading, setLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const checkLoginStatus = async () => {
+    try {
+      const token = await AsyncStorage.getItem("authToken");
+      setIsLoggedIn(!!token); 
+    } catch (error) {
+      console.error("Error checking login status:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Function to fetch user data from backend
   const fetchUser = async () => {
-    setLoading(true);
     try {
       const response = await axios.get('/user/profile');
       setUser(response.data.user);
-      await AsyncStorage.setItem('user', JSON.stringify(response.data.user));
       setRole(response.data.user.role);
       setProfilePicture(
         `${axios.defaults.baseURL}profile-pictures/${response.data.user.profilePicture}`,
@@ -26,9 +36,7 @@ export const UserProvider = ({children}) => {
       console.log(profilePicture);
     } catch (error) {
       console.log(error);
-    } finally {
-      setLoading(false);
-    }
+    } 
   };
 
   // Load user from AsyncStorage on app start
@@ -39,14 +47,15 @@ export const UserProvider = ({children}) => {
   // Login function
   const login = async (userData, token) => {
     await AsyncStorage.setItem('authToken', token);
+    setIsLoggedIn(true)
     await fetchUser();
   };
 
   // Logout function
   const logout = async () => {
     setUser(null);
-    await AsyncStorage.removeItem('user');
     await AsyncStorage.removeItem('authToken');
+    setIsLoggedIn(false);
   };
   return (
     <UserContext.Provider
@@ -56,9 +65,11 @@ export const UserProvider = ({children}) => {
         login,
         logout,
         fetchUser,
-        loading,
         profilePicture,
         role,
+        checkLoginStatus,
+        isLoggedIn,
+        loading
       }}
     >
       {children}

@@ -1,74 +1,76 @@
-import React, { useContext } from 'react';
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import React, {useContext, useEffect, useState} from 'react';
+import {StyleSheet, Text, Alert} from 'react-native';
+import {ScrollView} from 'react-native-gesture-handler';
 import BookingCard from './BookingCard';
+import axios from '../../../config/axios';
+import LoadingModal from '../../../components/LoadingModal';
 import ThemeContext from '../../../theme/ThemeContext';
 
-const CancelledBookings = ({ navigation }) => {
-  const { colors } = useContext(ThemeContext); // Access theme colors
-  const bookings = []; // Empty array to show "No Cancelled Bookings" message
+const CancelledBookings = ({navigation}) => {
+  const {colors} = useContext(ThemeContext);
+  const [myBookings, setMyBookings] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const fetchBookings = async () => {
+    setLoading(true);
+    try {
+      const response = await axios.get(`/booking/cancelled`);
+      setMyBookings(response.data);
+      console.log(response.data);
+    } catch (error) {
+      console.log(error);
+      Alert.alert(
+        'Something went wrong',
+        error.response?.data?.message || 'Something went wrong.',
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchBookings();
+  }, []);
+
+  if (!myBookings)
+    return <LoadingModal message="Fetching..." visible={loading} />;
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background }]}>
-      {bookings.length > 0 ? (
-        <ScrollView contentContainerStyle={styles.cardsContainer}>
-          {bookings.map((_, index) => (
-            <BookingCard key={index} navigation={navigation} />
-          ))}
-        </ScrollView>
+    <ScrollView style={styles.cardsContainer}>
+      {myBookings.length === 0 ? (
+        <Text
+          style={{
+            color: colors.color,
+            textAlign: 'center',
+            fontSize: 15,
+            marginVertical: 10,
+          }}>
+          No booking found
+        </Text>
       ) : (
-        <View style={styles.emptyState}>
-          <Text style={[styles.sorryText, { color: colors.color }]}>Sorry!!</Text>
-          <Text style={[styles.message, { color: colors.color }]}>
-            You don't have any Cancelled bookings.
-          </Text>
-        </View>
+        myBookings.map((booking, index) => (
+          <BookingCard
+            key={index}
+            booking={booking}
+            buttonText="View Details"
+            buttonClick={() => {
+              navigation.navigate('BookingConfirm', {
+                bookingId: booking._id,
+              });
+            }}
+            navigation={navigation}
+          />
+        ))
       )}
-
-      {/* Floating Action Button */}
-      <TouchableOpacity
-        style={[styles.fab, { backgroundColor: colors.buttonBg }]}
-        onPress={() => console.log('Add Booking')}
-      >
-        <Icon name="add" size={30} color={colors.buttonText} />
-      </TouchableOpacity>
-    </View>
+    </ScrollView>
   );
 };
 
 export default CancelledBookings;
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   cardsContainer: {
-    padding: 20,
-  },
-  emptyState: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  sorryText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  message: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  fab: {
-    position: 'absolute',
-    bottom: 20,
-    right: 20,
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOpacity: 0.2,
-    shadowOffset: { width: 0, height: 2 },
+    flexDirection: 'column',
+    paddingHorizontal: 20,
+    paddingVertical: 20,
   },
 });

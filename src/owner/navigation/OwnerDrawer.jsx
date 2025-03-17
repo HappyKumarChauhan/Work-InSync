@@ -21,12 +21,13 @@ import {useNavigation} from '@react-navigation/native';
 
 const Drawer = createDrawerNavigator();
 
+
 const CustomDrawerContent = props => {
   const {colors, theme, toggleTheme} = useContext(ThemeContext);
+  const {logout} =useContext(UserContext)
   const menuItems = [
     {name: 'Bookings', icon: 'groups', screen: 'Bookings'},
-    {name: 'Map', icon: 'map', screen: 'Map'},
-    {name: 'Booking History', icon: 'history', screen: 'Completed'},
+    {name: 'Listed Properties', icon: 'apartment', screen: 'Properties'},
     {name: 'QR Code', icon: 'qr-code', screen: 'QRScanner'},
   ];
 
@@ -86,7 +87,7 @@ const CustomDrawerContent = props => {
         {/* Logout Button */}
         <Pressable
           style={styles.menuItem}
-          onPress={() => console.log('Logging out')}>
+          onPress={()=>{logout()}}>
           <Icon name="logout" size={24} color="#fff" />
           <Text style={styles.menuText}>Logout</Text>
         </Pressable>
@@ -121,11 +122,7 @@ const CustomDrawerContent = props => {
 };
 
 const OwnerDrawer = () => {
-  const navigation = useNavigation();
-  const {user} = useContext(UserContext);
-  useEffect(() => {
-    if (!user) navigation.replace('LogIn');
-  }, [user]);
+  
   return (
     <Drawer.Navigator
       drawerContent={props => <CustomDrawerContent {...props} />}

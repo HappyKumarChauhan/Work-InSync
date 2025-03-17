@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState, useContext,useEffect} from 'react';
 import {
   View,
   Text,
@@ -15,6 +15,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import axios from '../../config/axios';
 import LoadingModal from '../LoadingModal'; // Import LoadingModal
 import {UserContext} from '../../context/UserContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Main = ({navigation}) => {
   const {colors} = useContext(ThemeContext);
@@ -28,6 +29,26 @@ const Main = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const [passwordVisible, setPasswordVisible] = useState(false);
   const {login} = useContext(UserContext);
+
+  const loadRememberedCredentials = async () => {
+    try {
+      const savedEmail = await AsyncStorage.getItem('savedEmail');
+      const savedPassword = await AsyncStorage.getItem('savedPassword');
+      if (savedEmail && savedPassword) {
+        setFormData({
+          email: savedEmail,
+          password: savedPassword,
+          rememberMe: true,
+        });
+      }
+    } catch (error) {
+      console.error('Failed to load remembered credentials', error);
+    }
+  };
+
+  useEffect(() => {
+    loadRememberedCredentials();
+  }, []);
 
   const handleInputChange = (field, value) => {
     setFormData({...formData, [field]: value});
@@ -46,9 +67,15 @@ const Main = ({navigation}) => {
     // Password validation (minimum 6 characters)
     if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters long';
+    } else if (formData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters long';
+    } else if (!/[A-Z]/.test(formData.password)) {
+      newErrors.password =
+        'Password must contain at least one uppercase letter';
+    } else if (!/\d/.test(formData.password)) {
+      newErrors.password = 'Password must contain at least one number';
     }
+
     setErrors(newErrors);
 
     // If there are no errors, return true
@@ -65,8 +92,13 @@ const Main = ({navigation}) => {
       const token = response.data.token;
       const userData = response.data.user;
       await login(userData, token);
-      Alert.alert('Success', 'Logged in successfully!');
-      navigation.navigate('Dashboard');
+      if (formData.rememberMe) {
+        await AsyncStorage.setItem('savedEmail', formData.email);
+        await AsyncStorage.setItem('savedPassword', formData.password);
+      } else {
+        await AsyncStorage.removeItem('savedEmail');
+        await AsyncStorage.removeItem('savedPassword');
+      }
     } catch (error) {
       console.log(error.response);
       Alert.alert('Error', 'Invalid credentials, please try again.');
@@ -208,7 +240,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   errorText: {
-    alignSelf:'flex-start',
+    alignSelf: 'flex-start',
     color: 'red',
     fontSize: 12,
     marginTop: -8,

@@ -1,5 +1,5 @@
 import React, {  useContext, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity, ImageBackground, Alert } from 'react-native';
+import { View, StyleSheet,  ImageBackground, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Main from '../components/login/Main'
 import { UserContext } from '../context/UserContext';
@@ -19,11 +19,6 @@ const LogInScreen = ({ navigation }) => {
             style={styles.background}
         >
             <View style={styles.overlay}>
-                <View style={{ flexDirection: 'row', justifyContent: 'flex-end', padding: 10 }}>
-                    <TouchableOpacity onPress={() => navigation.navigate('Dashboard')} style={{ backgroundColor: 'gray', borderRadius: 5, marginRight: 5 }}>
-                        <Icon name='keyboard-double-arrow-right' size={30} color={'black'} />
-                    </TouchableOpacity>
-                </View>
                 <Main navigation={navigation}/>
             </View>
         </ImageBackground>
@@ -37,7 +32,7 @@ const styles = StyleSheet.create({
   },
   overlay: {
     flex: 1,
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     backgroundColor: 'rgba(12, 25, 34, 0.6)',
   },
 });

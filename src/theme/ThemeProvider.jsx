@@ -4,12 +4,13 @@ import ThemeContext from './ThemeContext';
 import { lightTheme, darkTheme } from './colors';
 
 const ThemeProvider = ({ children }) => {
-  const systemTheme = useColorScheme();
-  const [theme, setTheme] = useState(systemTheme || 'light');
+  // const systemTheme = useColorScheme();
+  // const [theme, setTheme] = useState(systemTheme || 'light');
 
-  useEffect(() => {
-    setTheme(systemTheme);
-  }, [systemTheme]);
+  // useEffect(() => {
+  //   setTheme(systemTheme);
+  // }, [systemTheme]);
+  const [theme,setTheme]=useState('dark')
 
   const toggleTheme = () => {
     setTheme((prevTheme) => (prevTheme === 'light' ? 'dark' : 'light'));

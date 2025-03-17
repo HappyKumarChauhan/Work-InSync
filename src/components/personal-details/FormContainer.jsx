@@ -1,27 +1,72 @@
-import React, { useContext } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialIcons';
+import React, { useContext, useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import ThemeContext from '../../theme/ThemeContext';
+import { UserContext } from '../../context/UserContext';
+import axios from '../../config/axios';
+import LoadingModal from '../LoadingModal';
 
 const FormContainer = ({ navigation }) => {
-    const { colors } = useContext(ThemeContext)
+    const {user}=useContext(UserContext)
+    const { colors } = useContext(ThemeContext);
+    const [loading, setLoading] = useState(false)
+
+    // Using a single state object for form data
+    const [formData, setFormData] = useState({
+        name: user.name,
+        email: user.email,
+        contact: user.phoneNumber,
+        dateOfBirth: user.dateOfBirth,
+        address: user.address,
+        city: user.city,
+        pincode: user.pincode
+    });
+
+    // Function to handle input changes
+    const handleChange = (field, value) => {
+        setFormData({ ...formData, [field]: value });
+    };
+
+    // Function to handle form submission
+    const handleSave = async () => {
+        const { name, email, contact, dateOfBirth, address, city, pincode } = formData;
+
+        if (!name || !email || !contact || !dateOfBirth || !address || !city || !pincode) {
+            Alert.alert('Error', 'Please fill all fields before proceeding.');
+            return;
+        }
+        setLoading(true)
+        try {
+            await axios.put('/user/profile', formData);
+            Alert.alert('Success', 'Form submitted successfully!');
+            navigation.navigate('KYCDetails');
+        } catch (error) {
+            Alert.alert('Submission Failed', error.message);
+        }finally{
+            setLoading(false)
+        }
+    };
 
     return (
         <View style={styles.formContainer}>
-            {/* Form Section */}
             <Text style={[styles.label, { color: colors.color }]}>Fill the Details</Text>
-            {["Your Name", "Your Email", "Contact Number", "Date of birth", "Address", "City", "Pincode"].map((placeholder, index) => (
-                <TextInput key={index} style={[styles.input, { color: colors.color, backgroundColor: colors.secondaryBg }]} placeholder={placeholder} placeholderTextColor={colors.secondaryColor} />
+
+            {['name', 'email', 'contact', 'dateOfBirth', 'address', 'city', 'pincode'].map((field, index) => (
+                <TextInput
+                    key={index}
+                    style={[styles.input, { color: colors.color, backgroundColor: colors.secondaryBg }]}
+                    placeholder={field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}
+                    placeholderTextColor={colors.secondaryColor}
+                    editable={!(field==='email'||field==='name'||field==='contact')}
+                    keyboardType={field === 'email' ? 'email-address' : field === 'contact' || field === 'pincode' ? 'numeric' : 'default'}
+                    value={formData[field]}
+                    onChangeText={(value) => handleChange(field, value)}
+                />
             ))}
 
-            {/* Next Button */}
-            <TouchableOpacity style={[styles.nextButton, { backgroundColor: colors.buttonBg }]}
-                onPress={() => { navigation.navigate('KYCDetails') }}
-            >
-                <Text></Text>
-                <Text style={[styles.nextButtonText, { color: colors.buttonText }]}>Next</Text>
-                <Icon name="chevron-right" size={24} color={colors.buttonText} />
+            <TouchableOpacity style={[styles.nextButton, { backgroundColor: colors.buttonBg }]} onPress={handleSave}>
+                <Text style={[styles.nextButtonText, { color: colors.buttonText }]}>Save</Text>
             </TouchableOpacity>
+            <LoadingModal message='' visible={loading}/>
         </View>
     );
 };
@@ -35,47 +80,26 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginVertical: 15
     },
-    iconButton: {
-        width: 50,
-        height: 50,
-        justifyContent: 'center',
-        alignItems: 'center',
-        borderRadius: 50,
-        marginTop: Platform.OS === 'ios' ? 40 : 2,
-        backgroundColor: 'white',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.8,
-        shadowRadius: 4,
-        elevation: 5,
-    },
     input: {
         borderWidth: 1,
         borderColor: '#000000',
         borderRadius: 8,
         padding: 12,
         marginVertical: 10,
-        borderBottomWidth: 1,
-        borderBottomColor: '#000000',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.2,
         shadowRadius: 3,
         backgroundColor: '#f8f8f8',
-        borderRadius: 8,
         elevation: 5
     },
     nextButton: {
-        flexDirection: 'row',
-        backgroundColor: 'black',
         padding: 12,
         borderRadius: 8,
         alignItems: 'center',
-        justifyContent: 'space-between',
         marginVertical: 10,
     },
     nextButtonText: {
-        color: 'white',
         fontSize: 16,
         marginRight: 5
     },

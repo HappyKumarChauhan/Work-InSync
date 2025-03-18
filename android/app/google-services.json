@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "782454003523",
+    "project_id": "work-insync-sample",
+    "storage_bucket": "work-insync-sample.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:782454003523:android:99255190d45a4c600001f6",
+        "android_client_info": {
+          "package_name": "com.mydrawer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "782454003523-s8agco7sd6fc3knrk7c1kplag7lofhn2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mydrawer",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "782454003523-jslhpbrg6ct7mihmpg54gf2l1d8j81n6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcaHM2ktDBgZZ-EfUisco5qfNSUVryxvE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "782454003523-jslhpbrg6ct7mihmpg54gf2l1d8j81n6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

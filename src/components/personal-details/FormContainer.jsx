@@ -56,7 +56,7 @@ const FormContainer = ({ navigation }) => {
                     style={[styles.input, { color: colors.color, backgroundColor: colors.secondaryBg }]}
                     placeholder={field.charAt(0).toUpperCase() + field.slice(1).replace(/([A-Z])/g, ' $1')}
                     placeholderTextColor={colors.secondaryColor}
-                    editable={!(field==='email'||field==='name'||field==='contact')}
+                    editable={!(field==='email'||field==='name')}
                     keyboardType={field === 'email' ? 'email-address' : field === 'contact' || field === 'pincode' ? 'numeric' : 'default'}
                     value={formData[field]}
                     onChangeText={(value) => handleChange(field, value)}

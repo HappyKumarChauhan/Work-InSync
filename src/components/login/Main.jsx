@@ -16,6 +16,7 @@ import axios from '../../config/axios';
 import LoadingModal from '../LoadingModal'; // Import LoadingModal
 import {UserContext} from '../../context/UserContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { signInWithGoogle } from '../../auth/googleAuth';
 
 const Main = ({navigation}) => {
   const {colors} = useContext(ThemeContext);
@@ -106,6 +107,23 @@ const Main = ({navigation}) => {
       setLoading(false); // Hide loading modal
     }
   };
+  const handleGoogleLogin=async()=>{
+    setLoading(true)
+    try {
+      const {token} = await signInWithGoogle();
+      // Send token to backend
+      const response = await axios.post('/auth/firebase-login', {
+        token,
+      });
+      const responseToken = response.data.token;
+      const userData = response.data.user;
+      await login(userData, responseToken);
+    } catch (error) {
+      Alert.alert('Google Sign-In Failed:', error.response?.data?.message);
+    }finally{
+      setLoading(false)
+    }
+  }
 
   return (
     <LinearGradient colors={colors.bgGradient} style={styles.main}>
@@ -179,7 +197,7 @@ const Main = ({navigation}) => {
         <TouchableOpacity style={styles.socialIconButton}>
           <Icon name="facebook" size={30} color={colors.iconColor} />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.socialIconButton}>
+        <TouchableOpacity style={styles.socialIconButton} onPress={handleGoogleLogin}>
           <FAIcon name="google" size={30} color={colors.iconColor} />
         </TouchableOpacity>
         <TouchableOpacity style={styles.socialIconButton}>
@@ -198,7 +216,7 @@ const Main = ({navigation}) => {
           </Text>
         </TouchableOpacity>
       </View>
-      <LoadingModal visible={loading} message="Logging In..." />
+      <LoadingModal visible={loading} message="" />
     </LinearGradient>
   );
 };

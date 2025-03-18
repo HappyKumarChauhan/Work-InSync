@@ -15,10 +15,13 @@ import ThemeContext from '../theme/ThemeContext';
 import axios from '../config/axios';
 import LoadingModal from '../components/LoadingModal';
 import LinearGradient from 'react-native-linear-gradient';
+import {signInWithGoogle} from '../auth/googleAuth';
+import { UserContext } from '../context/UserContext';
 
-const UserSignUpScreen = ({navigation,route}) => {
-  const {role}=route.params;
+const UserSignUpScreen = ({navigation, route}) => {
+  const {role} = route.params;
   const {colors} = useContext(ThemeContext);
+  const {login} =useContext(UserContext)
   const [errors, setErrors] = useState({});
   const [formData, setFormData] = useState({
     name: '',
@@ -59,7 +62,8 @@ const UserSignUpScreen = ({navigation,route}) => {
     } else if (formData.password.length < 8) {
       newErrors.password = 'Password must be at least 8 characters long';
     } else if (!/[A-Z]/.test(formData.password)) {
-      newErrors.password = 'Password must contain at least one uppercase letter';
+      newErrors.password =
+        'Password must contain at least one uppercase letter';
     } else if (!/\d/.test(formData.password)) {
       newErrors.password = 'Password must contain at least one number';
     }
@@ -88,9 +92,23 @@ const UserSignUpScreen = ({navigation,route}) => {
   };
 
   // Placeholder functions for Google and Apple sign-in
-  const handleGoogleSignUp = () => {
-    console.log('Google Sign Up Functionality');
-    // Integrate Google sign-in logic here
+  const handleGoogleSignUp = async () => {
+    setLoading(true);
+    try {
+      const {token} = await signInWithGoogle();
+      // Send token to backend
+      const response = await axios.post('/auth/firebase-login', {
+        token,
+      });
+      const responseToken = response.data.token;
+      const userData = response.data.user;
+      await login(userData, responseToken);
+
+    } catch (error) {
+      Alert.alert('Google Sign-In Failed:', error.response?.data?.message);
+    }finally{
+      setLoading(false)
+    }
   };
 
   const handleAppleSignUp = () => {
@@ -106,23 +124,17 @@ const UserSignUpScreen = ({navigation,route}) => {
   return (
     <ImageBackground
       source={{
-        uri:
-          'https://cdn.decoist.com/wp-content/uploads/2015/08/Upholstered-daybed-for-the-contemporary-home-office.jpg',
+        uri: 'https://cdn.decoist.com/wp-content/uploads/2015/08/Upholstered-daybed-for-the-contemporary-home-office.jpg',
       }}
-      style={styles.background}
-    >
+      style={styles.background}>
       <View style={styles.overlay}>
-        
         <LinearGradient colors={colors.bgGradient} style={[styles.main]}>
-          <Text style={[styles.title, {color: colors.color}]}>
-            Sign Up
-          </Text>
+          <Text style={[styles.title, {color: colors.color}]}>Sign Up</Text>
           <View
             style={[
               styles.inputContainer,
               {backgroundColor: colors.secondaryBg},
-            ]}
-          >
+            ]}>
             <Icon name="person-outline" size={30} color={colors.color} />
             <TextInput
               style={[styles.input, {color: colors.color}]}
@@ -136,8 +148,7 @@ const UserSignUpScreen = ({navigation,route}) => {
             style={[
               styles.inputContainer,
               {backgroundColor: colors.secondaryBg},
-            ]}
-          >
+            ]}>
             <Icon name="mail" size={30} color={colors.color} />
             <TextInput
               style={[styles.input, {color: colors.color}]}
@@ -147,16 +158,13 @@ const UserSignUpScreen = ({navigation,route}) => {
               onChangeText={text => handleInputChange('email', text)}
             />
           </View>
-          {errors.email && (
-            <Text style={styles.errorText}>{errors.email}</Text>
-          )}
+          {errors.email && <Text style={styles.errorText}>{errors.email}</Text>}
 
           <View
             style={[
               styles.inputContainer,
               {backgroundColor: colors.secondaryBg},
-            ]}
-          >
+            ]}>
             <Icon name="phone" size={30} color={colors.color} />
             <TextInput
               style={[styles.input, {color: colors.color}]}
@@ -175,8 +183,7 @@ const UserSignUpScreen = ({navigation,route}) => {
             style={[
               styles.inputContainer,
               {backgroundColor: colors.secondaryBg},
-            ]}
-          >
+            ]}>
             <Icon name="lock" size={30} color={colors.color} />
             <TextInput
               style={[styles.input, {color: colors.color}]}
@@ -201,7 +208,6 @@ const UserSignUpScreen = ({navigation,route}) => {
             <Text style={styles.errorText}>{errors.password}</Text>
           )}
 
-
           {/* sign up button  */}
           <PrimaryButton title="Create New Account" handler={handleSignUp} />
 
@@ -212,18 +218,15 @@ const UserSignUpScreen = ({navigation,route}) => {
               alignItems: 'center',
               gap: 8,
               marginTop: 15,
-            }}
-          >
+            }}>
             <View
               style={{
                 height: 1,
                 backgroundColor: colors.secondaryColor,
                 width: '30%',
-              }}
-            ></View>
+              }}></View>
             <Text
-              style={[styles.socialSignUpText, {color: colors.secondaryColor}]}
-            >
+              style={[styles.socialSignUpText, {color: colors.secondaryColor}]}>
               Sign Up With
             </Text>
             <View
@@ -231,26 +234,22 @@ const UserSignUpScreen = ({navigation,route}) => {
                 height: 1,
                 backgroundColor: colors.secondaryColor,
                 width: '30%',
-              }}
-            ></View>
+              }}></View>
           </View>
           <View style={styles.socialIconsContainer}>
             <TouchableOpacity
               onPress={handleFacebookSignUp}
-              style={styles.socialIconButton}
-            >
+              style={styles.socialIconButton}>
               <Icon name="facebook" size={30} color={colors.iconColor} />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={handleGoogleSignUp}
-              style={styles.socialIconButton}
-            >
+              style={styles.socialIconButton}>
               <FAIcon name="google" size={30} color={colors.iconColor} />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={handleAppleSignUp}
-              style={styles.socialIconButton}
-            >
+              style={styles.socialIconButton}>
               <Icon name="apple" size={30} color={colors.iconColor} />
             </TouchableOpacity>
           </View>
@@ -262,8 +261,7 @@ const UserSignUpScreen = ({navigation,route}) => {
             <TouchableOpacity
               onPress={() => {
                 navigation.navigate('LogIn');
-              }}
-            >
+              }}>
               <Text style={[styles.loginButtonText, {color: colors.linkColor}]}>
                 Log In
               </Text>
@@ -272,7 +270,7 @@ const UserSignUpScreen = ({navigation,route}) => {
         </LinearGradient>
       </View>
       {/* Loading Modal */}
-      <LoadingModal visible={loading} message="Creating Account..." />
+      <LoadingModal visible={loading} message="" />
     </ImageBackground>
   );
 };
@@ -322,7 +320,7 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   errorText: {
-    alignSelf:'flex-start',
+    alignSelf: 'flex-start',
     color: 'red',
     fontSize: 12,
     marginTop: -8,

@@ -24,9 +24,9 @@ export const signInWithGoogle = async () => {
     const userCredential = await auth().signInWithCredential(googleCredential);
 
     // Retrieve the Firebase ID Token
-    const firebaseToken = await userCredential.user.getIdToken(); // 🔹 Fix here
+    const firebaseToken = await userCredential.user.getIdToken(); 
 
-    return {user: userCredential.user, token: firebaseToken}; // 🔹 Return token correctly
+    return {user: userCredential.user, token: firebaseToken}; // 🔹 Return token
   } catch (error) {
     console.error('Google Sign-In Error:', error);
     throw error;

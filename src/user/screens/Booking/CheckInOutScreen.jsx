@@ -50,10 +50,10 @@ const CheckInOutScreen = ({ navigation,route }) => {
   };
 
   return (
-    <ScrollView>
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+      <View style={[styles.container, { backgroundColor: colors.background }]}>
         {/* Header Section */}
         <Header navigation={navigation} title="Select Dates" />
+        <ScrollView style={styles.container}>
 
         {/* Location Section */}
         <View style={styles.locationSection}>
@@ -164,8 +164,8 @@ const CheckInOutScreen = ({ navigation,route }) => {
         <TouchableOpacity style={[styles.bookButton, { backgroundColor: colors.buttonBg }]} onPress={handleBooking}>
           <Text style={[styles.bookButtonText, { color: colors.buttonText }]}>Book Now</Text>
         </TouchableOpacity>
-      </SafeAreaView>
-    </ScrollView>
+        </ScrollView>
+      </View>
   );
 };
 

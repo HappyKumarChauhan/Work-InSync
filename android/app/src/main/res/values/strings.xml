@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Work-InSync</string>
+    <string name="facebook_app_id">577215695479628</string>
+    <string name="fb_login_protocol_scheme">fb1234</string>
+    <string name="facebook_client_token">45cfae4013d68a847e2b856ebcc8bb42</string>
 </resources>

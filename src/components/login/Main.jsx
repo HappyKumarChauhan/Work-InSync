@@ -108,9 +108,9 @@ const Main = ({navigation}) => {
     }
   };
   const handleGoogleLogin=async()=>{
-    setLoading(true)
     try {
       const {token} = await signInWithGoogle();
+      setLoading(true)
       // Send token to backend
       const response = await axios.post('/auth/firebase-login', {
         token,

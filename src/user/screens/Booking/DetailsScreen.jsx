@@ -4,8 +4,11 @@ import ThemeContext from '../../../theme/ThemeContext';
 import Header from '../../../components/Header';
 import axios from '../../../config/axios'
 import LoadingModal from '../../../components/LoadingModal';
+import { UserContext } from '../../../context/UserContext';
+import RazorpayCheckout from 'react-native-razorpay';
 
 const DetailsScreen = ({ route, navigation }) => {
+  const {user}=useContext(UserContext)
   const { colors } = useContext(ThemeContext)
   const { startDate, endDate, guests, property } = route.params; // Destructure the passed data
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState('UPI'); // Default payment method
@@ -20,19 +23,39 @@ const DetailsScreen = ({ route, navigation }) => {
   };
 
   const handleBooking = async () => {
-    setLoading(true);
-    try {
-      const response = await axios.post(
-        '/booking',
-        { property: property._id, startDate, endDate },
-      );
-      Alert.alert('Success', 'Your space has been booked');
-      navigation.navigate('BookingConfirm',{bookingId:response.data.booking._id})
-    } catch (error) {
-      Alert.alert('Booking Failed', error.response?.data?.message || 'Something went wrong.');
-    } finally {
-      setLoading(false);
+    var options = {
+      description: 'Space Booking',
+      image: '',
+      currency: 'INR',
+      key: 'rzp_test_zduyr1jajeMuXB',
+      amount: property.price*100,
+      name: 'Work-InSync',
+      order_id: '',//Replace this with an order_id created using Orders API.
+      prefill: {
+        email: user.email,
+        contact: user.phoneNumber,
+        name: user.name
+      },
+      theme: { color: '#53a20e' }
     }
+    RazorpayCheckout.open(options).then(async(data) => {
+      // handle success
+      try {
+        const response = await axios.post(
+          '/booking',
+          { property: property._id, startDate, endDate },
+        );
+        Alert.alert('Success', 'Your space has been booked');
+        navigation.navigate('BookingConfirm',{bookingId:response.data.booking._id})
+      } catch (error) {
+        Alert.alert('Booking Failed', error.response?.data?.message || 'Something went wrong.');
+      } finally {
+        setLoading(false);
+      }
+    }).catch((error) => {
+      // handle failure
+      Alert.alert(`Error: ${error.code} | ${error.description}`);
+    });    
   }
 
   return (
@@ -137,7 +160,7 @@ const DetailsScreen = ({ route, navigation }) => {
       </Modal>
 
       {/* Continue Button */}
-      <TouchableOpacity style={[styles.continueButton, { backgroundColor: colors.buttonBg }]} onPress={() => handleBooking()}>
+      <TouchableOpacity style={[styles.continueButton, { backgroundColor: colors.buttonBg }]} onPress={handleBooking}>
         <Text style={[styles.continueButtonText, { color: colors.buttonText }]}>Continue</Text>
       </TouchableOpacity>
       <LoadingModal visible={loading} message="Booking is in progress..." />

@@ -16,6 +16,7 @@ import axios from '../config/axios';
 import LoadingModal from '../components/LoadingModal';
 import LinearGradient from 'react-native-linear-gradient';
 import {signInWithGoogle} from '../auth/googleAuth';
+import { signInWithFacebook } from '../auth/facebookAuth';
 import { UserContext } from '../context/UserContext';
 
 const UserSignUpScreen = ({navigation, route}) => {
@@ -93,9 +94,9 @@ const UserSignUpScreen = ({navigation, route}) => {
 
   // Placeholder functions for Google and Apple sign-in
   const handleGoogleSignUp = async () => {
-    setLoading(true);
     try {
       const {token} = await signInWithGoogle();
+      setLoading(true);
       // Send token to backend
       const response = await axios.post('/auth/firebase-login', {
         token,
@@ -103,7 +104,6 @@ const UserSignUpScreen = ({navigation, route}) => {
       const responseToken = response.data.token;
       const userData = response.data.user;
       await login(userData, responseToken);
-
     } catch (error) {
       Alert.alert('Google Sign-In Failed:', error.response?.data?.message);
     }finally{
@@ -116,9 +116,24 @@ const UserSignUpScreen = ({navigation, route}) => {
     // Integrate Apple sign-in logic here
   };
 
-  const handleFacebookSignUp = () => {
-    console.log('Facebook Sign Up Functionality');
-    // Integrate Facebook sign-in logic here
+  const handleFacebookSignUp = async() => {
+    try {
+      const { user, token } = await signInWithFacebook();
+      console.log(token,user)
+      setLoading(true);
+      
+      // Send token to backend for verification
+      const response = await axios.post('/auth/firebase-login', {
+        token,
+      });
+      const responseToken = response.data.token;
+      const userData = response.data.user;
+      await login(userData, responseToken);
+    } catch (error) {
+      Alert.alert('Google Sign-In Failed:', error.response?.data?.message);
+    }finally{
+      setLoading(false)
+    }
   };
 
   return (

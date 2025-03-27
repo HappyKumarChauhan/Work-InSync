@@ -1,21 +1,27 @@
-import React, { useContext, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Platform } from 'react-native';
+import React, {useContext, useState} from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  TextInput,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { Calendar } from 'react-native-calendars';
-import { TextInput } from 'react-native-gesture-handler';
+import {CalendarList} from 'react-native-calendars';
 import ThemeContext from '../../../theme/ThemeContext';
 import Header from '../../../components/Header';
 
-const CheckInOutScreen = ({ navigation,route }) => {
-  const {property}=route.params;
-  const { colors } = useContext(ThemeContext)
+const CheckInOutScreen = ({navigation, route}) => {
+  const {property} = route.params;
+  const {colors} = useContext(ThemeContext);
   const [selectedStartDate, setSelectedStartDate] = useState('');
   const [selectedEndDate, setSelectedEndDate] = useState('');
   const [numberOfGuests, setNumberOfGuests] = useState(1);
   const [location, setLocation] = useState('');
-  const [selectedTab, setSelectedTab] = useState('dates'); // Track selected tab
 
-  const handleDateChange = (day) => {
+  const handleDateChange = day => {
     if (!selectedStartDate) {
       setSelectedStartDate(day.dateString);
     } else if (!selectedEndDate) {
@@ -31,141 +37,188 @@ const CheckInOutScreen = ({ navigation,route }) => {
     }
   };
 
-  const handleGuestsChange = (action) => {
+  const handleGuestsChange = action => {
     if (action === 'increase') {
-      setNumberOfGuests((prev) => prev + 1);
+      setNumberOfGuests(prev => prev + 1);
     } else if (action === 'decrease' && numberOfGuests > 1) {
-      setNumberOfGuests((prev) => prev - 1);
+      setNumberOfGuests(prev => prev - 1);
     }
   };
 
-  // Navigate to the DetailsScreen
   const handleBooking = () => {
     navigation.navigate('Details', {
       startDate: selectedStartDate,
       endDate: selectedEndDate,
       guests: numberOfGuests,
-      property
+      property,
     });
   };
 
+  const getMarkedDates = () => {
+    let markedDates = {};
+
+    if (selectedStartDate) {
+      markedDates[selectedStartDate] = {
+        startingDay: true,
+        color: 'green',
+        textColor: 'white',
+      };
+    }
+
+    if (selectedEndDate) {
+      markedDates[selectedEndDate] = {
+        endingDay: true,
+        color: 'red',
+        textColor: 'white',
+      };
+    }
+
+    if (selectedStartDate && selectedEndDate) {
+      let start = new Date(selectedStartDate);
+      let end = new Date(selectedEndDate);
+      let current = new Date(start);
+
+      while (current < end) {
+        let dateString = current.toISOString().split('T')[0];
+        if (
+          dateString !== selectedStartDate &&
+          dateString !== selectedEndDate
+        ) {
+          markedDates[dateString] = {color: 'gray', textColor: 'white'};
+        }
+        current.setDate(current.getDate() + 1);
+      }
+    }
+
+    return markedDates;
+  };
+
   return (
-      <View style={[styles.container, { backgroundColor: colors.background }]}>
-        {/* Header Section */}
-        <Header navigation={navigation} title="Select Dates" />
-        <ScrollView style={styles.container}>
-
-        {/* Location Section */}
-        <View style={styles.locationSection}>
-          <TextInput
-            style={[styles.locationSearchBar, { backgroundColor: colors.secondaryBg }]}
-            placeholder="Search for a location"
-            placeholderTextColor={colors.secondaryColor}
-            onChangeText={(text) => setLocation(text)}
-            value={location}
-          />
-          <Icon name="search" size={20} color="#333" style={[styles.searchIcon, { color: colors.color }]} />
-        </View>
-
-        {/* Date Selector Tabs */}
-        <View style={styles.tabsContainer}>
-          <TouchableOpacity
-            style={[styles.tab, { backgroundColor: colors.secondaryBg }, selectedTab === 'dates' && styles.activeTab]}
-            onPress={() => setSelectedTab('dates')}
-          >
-            <Text style={[styles.tabText, { color: colors.color }]}>Dates</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.tab, { backgroundColor: colors.secondaryBg }, selectedTab === 'months' && styles.activeTab]}
-            onPress={() => setSelectedTab('months')}
-          >
-            <Text style={[styles.tabText, { color: colors.color }]}>Months</Text>
-          </TouchableOpacity>
-        </View>
-
-        {/* Conditional rendering of calendar */}
-        {selectedTab === 'dates' ? (
-          <View style={[styles.calendarContainer, { backgroundColor: colors.secondaryBg }]}>
-            <Calendar
-              onDayPress={handleDateChange}
-              markedDates={{
-                [selectedStartDate]: { selected: true, selectedColor: 'green', selectedTextColor: 'white' },
-                [selectedEndDate]: { selected: true, selectedColor: 'red', selectedTextColor: 'white' },
-              }}
-              minDate={new Date().toISOString().split('T')[0]}
-              theme={{
-                textSectionTitleColor: colors.color,
-                monthTextColor: colors.color,
-                calendarBackground: colors.secondaryBg,
-                arrowColor: colors.color,
-                dayTextColor: colors.color,
-                textDisabledColor: colors.secondaryColor,
-                todayTextColor: colors.linkColor,
-                todayBackgroundColor: 'gray',
-                selectedDayBackgroundColor: 'green',
-                selectedDayTextColor: 'white',
-              }}
-            />
-          </View>
-        ) : (
-          <View style={[styles.calendarContainer, { backgroundColor: colors.secondaryBg }]}>
-            <Calendar
-              monthFormat={'yyyy MM'}
-              onMonthChange={(month) => console.log('month changed', month)}
-              theme={{
-                textSectionTitleColor: colors.color,
-                calendarBackground: colors.secondaryBg,
-                monthTextColor: colors.color,
-                arrowColor: colors.color,
-                dayTextColor: colors.color,
-                textDisabledColor: colors.secondaryColor,
-                todayTextColor: colors.linkColor,
-                selectedDayBackgroundColor: 'green',
-                selectedDayTextColor: 'white',
-              }}
-            />
-          </View>
-        )}
-
-        {/* Check-in/Check-out Section */}
-        <View style={styles.dateSummaryContainer}>
-          <View style={styles.dateSummaryItem}>
-            <Text style={[styles.dateLabel, { color: colors.color }]}>Check In</Text>
-            <View style={{ flexDirection: 'row' }}>
-              <Text style={[styles.dateValue, { color: colors.secondaryColor }]}>{selectedStartDate || 'Select Date'}</Text>
-              <Icon name="calendar-month" size={20} color="white" style={styles.arrowIcon} />
-            </View>
-          </View>
-          <Icon name="arrow-forward" size={30} color="white" style={styles.arrowIcon} />
-          <View style={styles.dateSummaryItem}>
-            <Text style={[styles.dateLabel, { color: colors.color }]}>Check Out</Text>
-            <View style={{ flexDirection: 'row' }}>
-              <Text style={[styles.dateValue, { color: colors.secondaryColor }]}>{selectedEndDate || 'Select Date'}</Text>
-              <Icon name="calendar-month" size={20} color="white" style={styles.arrowIcon} />
-            </View>
-          </View>
-        </View>
-
-        {/* Number of Guests Section */}
-        <View style={styles.guestSelector}>
-          <Text style={[styles.guestLabel, { color: colors.color }]}>Number of Guests</Text>
-          <View style={styles.guestControls}>
-            <TouchableOpacity onPress={() => handleGuestsChange('decrease')} disabled={numberOfGuests == 1} style={[styles.guestButton, { backgroundColor: colors.secondaryBg }]}>
-              <Icon name="remove" size={24} color={colors.color} />
-            </TouchableOpacity>
-            <Text style={[styles.guestCount, { color: colors.color }]}>{numberOfGuests}</Text>
-            <TouchableOpacity onPress={() => handleGuestsChange('increase')} style={[styles.guestButton, { backgroundColor: colors.secondaryBg }]}>
-              <Icon name="add" size={24} color={colors.color} />
-            </TouchableOpacity>
-          </View>
-        </View>
-
-        {/* Book Now Button */}
-        <TouchableOpacity style={[styles.bookButton, { backgroundColor: colors.buttonBg }]} onPress={handleBooking}>
-          <Text style={[styles.bookButtonText, { color: colors.buttonText }]}>Book Now</Text>
-        </TouchableOpacity>
-        </ScrollView>
+    <KeyboardAvoidingView
+      style={[styles.container, {backgroundColor: colors.background}]}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <Header navigation={navigation} title="Select Dates" />
+      {/* Location Search */}
+      <View style={styles.locationSection}>
+        <TextInput
+          style={[
+            styles.locationSearchBar,
+            {backgroundColor: colors.secondaryBg},
+          ]}
+          placeholder="Search for a location"
+          placeholderTextColor={colors.secondaryColor}
+          onChangeText={text => setLocation(text)}
+          value={location}
+        />
+        <Icon
+          name="search"
+          size={20}
+          style={[styles.searchIcon, {color: colors.color}]}
+        />
       </View>
+
+      {/* Calendar (Vertically Scrollable by Default) */}
+      <View
+        style={[
+          styles.calendarContainer,
+          {backgroundColor: colors.secondaryBg},
+        ]}>
+        <CalendarList
+          onDayPress={handleDateChange}
+          markingType={'period'}
+          markedDates={getMarkedDates()}
+          pastScrollRange={0} // Disable scrolling to past months
+          futureScrollRange={12} // Allow scrolling up to 12 months ahead
+          minDate={new Date().toISOString().split('T')[0]}
+          theme={{
+            textSectionTitleColor: colors.color,
+            calendarBackground: colors.secondaryBg,
+            monthTextColor: colors.color,
+            arrowColor: colors.color,
+            dayTextColor: colors.color,
+            textDisabledColor: colors.secondaryColor,
+            todayTextColor: colors.linkColor,
+            selectedDayBackgroundColor: 'green',
+            selectedDayTextColor: 'white',
+          }}
+          horizontal={false}
+        />
+      </View>
+
+      {/* Check-in/Check-out Section */}
+      <View style={styles.dateSummaryContainer}>
+        <View style={styles.dateSummaryItem}>
+          <Text style={[styles.dateLabel, {color: colors.color}]}>
+            Check In
+          </Text>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={[styles.dateValue, {color: colors.secondaryColor}]}>
+              {selectedStartDate || 'Select Date'}
+            </Text>
+            <Icon
+              name="calendar-month"
+              size={20}
+              color="white"
+              style={styles.arrowIcon}
+            />
+          </View>
+        </View>
+        <Icon
+          name="arrow-forward"
+          size={30}
+          color="white"
+          style={styles.arrowIcon}
+        />
+        <View style={styles.dateSummaryItem}>
+          <Text style={[styles.dateLabel, {color: colors.color}]}>
+            Check Out
+          </Text>
+          <View style={{flexDirection: 'row'}}>
+            <Text style={[styles.dateValue, {color: colors.secondaryColor}]}>
+              {selectedEndDate || 'Select Date'}
+            </Text>
+            <Icon
+              name="calendar-month"
+              size={20}
+              color="white"
+              style={styles.arrowIcon}
+            />
+          </View>
+        </View>
+      </View>
+
+      {/* Number of Guests Section */}
+      <View style={styles.guestSelector}>
+        <Text style={[styles.guestLabel, {color: colors.color}]}>
+          Number of Guests
+        </Text>
+        <View style={styles.guestControls}>
+          <TouchableOpacity
+            onPress={() => handleGuestsChange('decrease')}
+            disabled={numberOfGuests == 1}
+            style={[styles.guestButton, {backgroundColor: colors.secondaryBg}]}>
+            <Icon name="remove" size={24} color={colors.color} />
+          </TouchableOpacity>
+          <Text style={[styles.guestCount, {color: colors.color}]}>
+            {numberOfGuests}
+          </Text>
+          <TouchableOpacity
+            onPress={() => handleGuestsChange('increase')}
+            style={[styles.guestButton, {backgroundColor: colors.secondaryBg}]}>
+            <Icon name="add" size={24} color={colors.color} />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      {/* Book Now Button */}
+      <TouchableOpacity
+        style={[styles.bookButton, {backgroundColor: colors.buttonBg}]}
+        onPress={handleBooking}>
+        <Text style={[styles.bookButtonText, {color: colors.buttonText}]}>
+          Book Now
+        </Text>
+      </TouchableOpacity>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -180,55 +233,19 @@ const styles = StyleSheet.create({
   },
   locationSearchBar: {
     height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
     borderRadius: 20,
     paddingLeft: 40,
-    paddingRight: 10,
-    fontSize: 16,
     flex: 1,
   },
   searchIcon: {
     position: 'absolute',
     left: 20,
   },
-  tabsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    marginVertical: 10,
-  },
-  tab: {
-    flex: 1,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    // Shadow for iOS
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.8,
-    shadowRadius: 4,
-    // Elevation for Android
-    elevation: 5,
-  },
-  activeTab: {
-    backgroundColor: 'gray',
-    borderBottomColor: 'black',  // Background color for active tab
-    borderBottomWidth: 1,
-    width: 'auto',
-  },
-  tabText: {
-    fontSize: 16,
-    color: '#052659',
-  },
   calendarContainer: {
+    flex: 1,
     marginVertical: 20,
-    marginHorizontal: 16,
     borderRadius: 10,
     padding: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
   },
   dateSummaryContainer: {
     flexDirection: 'row',
@@ -236,7 +253,7 @@ const styles = StyleSheet.create({
     marginVertical: 20,
     paddingHorizontal: 20,
     justifyContent: 'space-between',
-    flexWrap: 'wrap'
+    flexWrap: 'wrap',
   },
   dateSummaryItem: {
     borderBottomColor: 'white',
@@ -251,7 +268,6 @@ const styles = StyleSheet.create({
   dateValue: {
     fontSize: 16,
     color: '#999',
-
   },
   arrowIcon: {
     marginHorizontal: 10,
@@ -289,7 +305,7 @@ const styles = StyleSheet.create({
     borderColor: '#000',
     // Adding shadow and elevation similar to top icons
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.8,
     shadowRadius: 4,
     elevation: 5,

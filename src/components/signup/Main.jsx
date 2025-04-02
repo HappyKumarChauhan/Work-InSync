@@ -19,7 +19,7 @@ import {signInWithFacebook} from '../../auth/facebookAuth';
 import {UserContext} from '../../context/UserContext';
 
 
-const Main = ({role}) => {
+const Main = ({role,navigation}) => {
   const {colors} = useContext(ThemeContext);
   const {login} = useContext(UserContext);
   const [errors, setErrors] = useState({});

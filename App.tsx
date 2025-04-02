@@ -4,7 +4,6 @@ import ThemeProvider from './src/theme/ThemeProvider';
 import { UserProvider } from './src/context/UserContext';
 import { Alert, PermissionsAndroid } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
-import { UserContext } from './src/context/UserContext';
 
 const App = () => {
   useEffect(() => {

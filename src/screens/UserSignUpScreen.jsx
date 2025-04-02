@@ -15,7 +15,7 @@ const UserSignUpScreen = ({navigation, route}) => {
       }}
       style={styles.background}>
       <View style={styles.overlay}>
-        <Main role={role}/>
+        <Main role={role} navigation={navigation}/>
       </View>
     </ImageBackground>
   );

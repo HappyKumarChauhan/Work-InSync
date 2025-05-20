@@ -1,4 +1,4 @@
- import React, {useContext, useState, useEffect} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -55,8 +55,12 @@ const RoomSpaceScreen = ({navigation, route}) => {
   };
 
   const openMap = () => {
-    const mapUrl = 'https://www.google.com/maps?q=Bengaluru+Brigade';
-    Linking.openURL(mapUrl);
+    if (property && property.coordinates.lat && property.coordinates.lng) {
+      const mapUrl = `https://www.google.com/maps?q=${property.coordinates.lat},${property.coordinates.lng}`;
+      Linking.openURL(mapUrl);
+    } else {
+      Alert.alert('Location not available');
+    }
   };
 
   if (!property) return <LoadingModal message="" visible={loading} />;

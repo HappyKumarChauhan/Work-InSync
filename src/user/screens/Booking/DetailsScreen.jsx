@@ -7,6 +7,19 @@ import LoadingModal from '../../../components/LoadingModal';
 import { UserContext } from '../../../context/UserContext';
 import RazorpayCheckout from 'react-native-razorpay';
 
+// Helper function to calculate total and platform fee
+function calculateBookingAmount(pricePerDay, startDate, endDate) {
+  if (!startDate || !endDate) return { total: 0, platformFee: 0, days: 0 };
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  // Calculate difference in days (inclusive)
+  const diffTime = end - start;
+  const days = Math.max(1, Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1);
+  const total = pricePerDay * days;
+  const platformFee = +(total * 0.02).toFixed(2);
+  return { total, platformFee, days };
+}
+
 const DetailsScreen = ({ route, navigation }) => {
   const {user}=useContext(UserContext)
   const { colors } = useContext(ThemeContext)
@@ -57,6 +70,8 @@ const DetailsScreen = ({ route, navigation }) => {
       Alert.alert(`Error: ${error.code} | ${error.description}`);
     });    
   }
+
+  const { total, platformFee, days } = calculateBookingAmount(property.price, startDate, endDate);
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>

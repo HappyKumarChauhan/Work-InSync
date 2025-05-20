@@ -8,7 +8,6 @@ import {
   Platform,
   Alert,
 } from 'react-native';
-import Card from '../components/Card';
 import CardTwo from '../components/CardTwo';
 import ThemeContext from '../../theme/ThemeContext';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -17,7 +16,6 @@ import LoadingModal from '../../components/LoadingModal';
 
 const DashboardScreen = ({navigation}) => {
   const {colors} = useContext(ThemeContext);
-  const [activeTab, setActiveTab] = useState('Upcoming');
   const [myProperties, setMyProperties] = useState(null);
   const [loading, setLoading] = useState(false);
 
@@ -41,12 +39,6 @@ const DashboardScreen = ({navigation}) => {
     fetchProperties();
   }, []);
 
-  const upcomingData = [
-    {id: '1', title: 'Bengaluru Brigade', desk: 'BM-8F-WS-26-2nd Floor'},
-    {id: '2', title: 'Bengaluru Brigade', desk: 'BM-8F-WS-26-2nd Floor'},
-    {id: '3', title: 'Bengaluru Brigade', desk: 'BM-8F-WS-26-2nd Floor'},
-    {id: '4', title: 'Bengaluru Brigade', desk: 'BM-8F-WS-26-2nd Floor'},
-  ];
 
   if (!myProperties)
     return <LoadingModal message="Fetching Properties..." visible={loading} />;
@@ -60,7 +52,7 @@ const DashboardScreen = ({navigation}) => {
           <Icon name="menu" size={30} color={colors.color} />
         </TouchableOpacity>
         <Text style={[styles.headerTitle, {color: colors.color}]}>
-          Dashboard
+          My Properties
         </Text>
         <TouchableOpacity
           onPress={() => navigation.navigate('Notifications')}
@@ -69,54 +61,14 @@ const DashboardScreen = ({navigation}) => {
         </TouchableOpacity>
       </View>
 
-      <View style={styles.tabContainer}>
-        <TouchableOpacity
-          style={[
-            styles.tab,
-            activeTab === 'Upcoming' && {
-              borderBottomColor: colors.color,
-              borderBottomWidth: 2,
-            },
-          ]}
-          onPress={() => setActiveTab('Upcoming')}>
-          <Text style={[styles.tabText, {color: colors.color}]}>Upcoming</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[
-            styles.tab,
-            activeTab === 'My List' && {
-              borderBottomColor: colors.color,
-              borderBottomWidth: 2,
-            },
-          ]}
-          onPress={() => setActiveTab('My List')}>
-          <Text style={[styles.tabText, {color: colors.color}]}>My List</Text>
-        </TouchableOpacity>
-      </View>
 
-      {activeTab === 'Upcoming' ? (
-        <FlatList
-          data={upcomingData}
-          keyExtractor={item => item._id}
-          renderItem={({item}) => <Card title={item.title} desk={item.desk} />}
-          contentContainerStyle={{padding: 10}}
-        />
-      ) : (
-        myProperties.length===0?(<Text
-          style={{
-            color: colors.color,
-            textAlign: 'center',
-            fontSize: 15,
-            marginVertical: 10,
-          }}>
-          No property listed
-        </Text>):(<FlatList
+
+    <FlatList
           data={myProperties}
           keyExtractor={item => item._id}
           renderItem={({item}) => <CardTwo key={item._id} data={item} />}
           contentContainerStyle={{padding: 10}}
-        />)
-      )}
+        />
       <TouchableOpacity
         style={[
           styles.addPropertyButton,
@@ -134,10 +86,6 @@ const DashboardScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  tabContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
   },
   header: {
     flexDirection: 'row',
@@ -168,13 +116,6 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     // Elevation for Android
     elevation: 5,
-  },
-  tab: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-  },
-  tabText: {
-    fontSize: 16,
   },
   addPropertyButton: {
     backgroundColor: 'rgba(12, 25, 34, 1)',

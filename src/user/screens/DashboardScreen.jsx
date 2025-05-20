@@ -216,19 +216,19 @@ const Dashboard = ({navigation}) => {
             customMapStyle={theme === 'dark' ? darkModeStyle : lightModeStyle}
             style={styles.background}
             initialRegion={{
-              latitude: 28.7041, // Default center latitude (change to your needs)
-              longitude: 77.1025, // Default center longitude
+              latitude: 30.3341, // Default center latitude (change to your needs)
+              longitude: 77.95, // Default center longitude
               latitudeDelta: 0.1,
               longitudeDelta: 0.1,
             }}>
-            {locations.map(location => (
+            {properties.map(property => (
               <Marker
-                key={location.id}
+                key={property._id}
                 coordinate={{
-                  latitude: location.latitude,
-                  longitude: location.longitude,
+                  latitude: property.coordinates.lat,
+                  longitude: property.coordinates.lng,
                 }}
-                title={location.title}
+                title={property.title}
               />
             ))}
           </MapView>
@@ -252,7 +252,7 @@ const Dashboard = ({navigation}) => {
                 <Icon name="notifications" size={30} color={colors.color} />
               </TouchableOpacity>
             </View>
-            <View
+            {/* <View
               style={[
                 styles.searchBarTop,
                 {backgroundColor: colors.secondaryBg},
@@ -265,7 +265,7 @@ const Dashboard = ({navigation}) => {
                 value={searchQuery}
                 onChangeText={setSearchQuery}
               />
-            </View>
+            </View> */}
           </View>
           {/* Expandable Bottom Section */}
           <Animated.View style={[styles.main, {height: mainHeight}]}>

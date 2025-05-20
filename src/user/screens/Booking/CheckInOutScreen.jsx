@@ -12,6 +12,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {CalendarList} from 'react-native-calendars';
 import ThemeContext from '../../../theme/ThemeContext';
 import Header from '../../../components/Header';
+import axios from '../../../config/axios';
+import LoadingModal from '../../../components/LoadingModal';
 
 const CheckInOutScreen = ({navigation, route}) => {
   const {property} = route.params;
@@ -20,6 +22,7 @@ const CheckInOutScreen = ({navigation, route}) => {
   const [selectedEndDate, setSelectedEndDate] = useState('');
   const [numberOfGuests, setNumberOfGuests] = useState(1);
   const [location, setLocation] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleDateChange = day => {
     if (!selectedStartDate) {
@@ -45,7 +48,31 @@ const CheckInOutScreen = ({navigation, route}) => {
     }
   };
 
-  const handleBooking = () => {
+  const handleBooking = async () => {
+    if (!selectedStartDate || !selectedEndDate) {
+      alert('Please select both check-in and check-out dates.');
+      return;
+    }
+    setLoading(true);
+
+    try {
+      const response = await axios.post('/booking/check-availability', {
+        propertyId: property._id,
+        startDate: selectedStartDate,
+        endDate: selectedEndDate,
+      });
+
+      if (!response.data.available) {
+        alert('Selected dates are not available. Please choose different dates.');
+        return;
+      }
+    } catch (error) {
+      console.log(error.response);
+      alert('Failed to check availability. Please try again.');
+      return;
+    }finally{
+      setLoading(false);
+    }
     navigation.navigate('Details', {
       startDate: selectedStartDate,
       endDate: selectedEndDate,
@@ -218,6 +245,7 @@ const CheckInOutScreen = ({navigation, route}) => {
           Book Now
         </Text>
       </TouchableOpacity>
+      <LoadingModal message="" visible={loading} />
     </KeyboardAvoidingView>
   );
 };

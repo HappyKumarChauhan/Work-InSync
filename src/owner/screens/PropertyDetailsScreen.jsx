@@ -1,4 +1,4 @@
-import React, {useState, useContext} from 'react';
+import React, {useState,useEffect, useContext} from 'react';
 import {
   View,
   Text,
@@ -8,17 +8,24 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
+import Geolocation from '@react-native-community/geolocation';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import ThemeContext from '../../theme/ThemeContext';
 import Header from '../components/Header';
 import RadioGroup from 'react-native-radio-buttons-group';
 import axios from '../../config/axios';
+import { PermissionsAndroid, Platform } from 'react-native';
 import LoadingModal from '../../components/LoadingModal';
+
 
 const PropertyDetailsScreen = ({navigation}) => {
   const {colors} = useContext(ThemeContext);
   const [propertyName, setPropertyName] = useState('');
   const [description, setDescription] = useState('');
+  const [coordinates, setCoordinates] = useState({
+    lng: null,
+    lat: null,
+  });
   const [location, setLocation] = useState('');
   const [price, setPrice] = useState('');
   const [facilities, setFacilities] = useState({
@@ -42,6 +49,52 @@ const PropertyDetailsScreen = ({navigation}) => {
     {id: '2', label: 'Monthly', value: 'Monthly', color: colors.color},
   ];
   const [rentalType, setRentalType] = useState(null);
+
+  useEffect(() => {
+  const requestLocationPermission = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+          {
+            title: 'Location Permission',
+            message: 'This app needs access to your location.',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          }
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        console.warn(err);
+        return false;
+      }
+    }
+    // iOS permissions are handled by Geolocation itself
+    return true;
+  };
+
+  const fetchCurrentLocation = async () => {
+    const hasPermission = await requestLocationPermission();
+    if (!hasPermission) {
+      console.warn('Location permission denied');
+      return;
+    }
+    Geolocation.getCurrentPosition(
+      position => {
+        const { latitude, longitude } = position.coords;
+        setCoordinates({ lat: latitude, lng: longitude });
+        console.log(coordinates)
+      },
+      error => {
+        console.warn('Error getting location:', error.message);
+      },
+      { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+    );
+  };
+
+  fetchCurrentLocation();
+}, []);
   const togglePaymentOption = option => {
     setPaymentOptions(prev => ({...prev, [option]: !prev[option]}));
   };
@@ -64,6 +117,7 @@ const PropertyDetailsScreen = ({navigation}) => {
       location,
       price,
       rentalType, // Make sure this is not null
+      coordinates,
       amenities: selectedFacilities,
     };
 
@@ -135,18 +189,35 @@ const PropertyDetailsScreen = ({navigation}) => {
           value={price}
           onChangeText={setPrice}
         />
-        {/* <TouchableOpacity
-          style={[styles.locationInput, {backgroundColor: colors.secondaryBg}]}
-        >
-          <Text
-            style={[styles.placeholderText, {color: colors.secondaryColor}]}
-          >
-            Location
-          </Text>
-          <Text style={[styles.linkText, {color: colors.linkColor}]}>
-            Visit Map
-          </Text>
-        </TouchableOpacity> */}
+        {/* Coordinates */}
+        <Text style={[styles.label, {color: colors.color}]}>
+          Coordinates (Automatically fetched)
+        </Text>
+        <View style={{
+          flexDirection: 'row',
+          gap: 10,
+        }}>
+        <TextInput
+          style={[
+            styles.input,
+            {color: colors.color, backgroundColor: colors.secondaryBg},
+          ]}
+          placeholder="Latitude"
+          placeholderTextColor={colors.secondaryColor}
+          value={coordinates.lat ? coordinates.lat.toString() : ''}
+          editable={false}
+        />
+        <TextInput
+          style={[
+            styles.input,
+            {color: colors.color, backgroundColor: colors.secondaryBg},
+          ]}
+          placeholder="Longitude"
+          placeholderTextColor={colors.secondaryColor}
+          value={coordinates.lng ? coordinates.lng.toString() : ''}
+          editable={false}
+        />
+        </View>
 
         <Text
           style={[[styles.label, {color: colors.color}], {color: colors.color}]}
@@ -168,31 +239,7 @@ const PropertyDetailsScreen = ({navigation}) => {
               : null
           }
           containerStyle={styles.radioGroup}
-        />
-
-        {/* Features Section
-        <Text
-          style={[[styles.label, {color: colors.color}], {color: colors.color}]}
-        >
-          Features
-        </Text>
-        {['City', 'Built In', 'Price per sqft'].map((feature, index) => (
-          <View key={index} style={styles.featureRow}>
-            <Icon
-              name="arrow-right"
-              size={24}
-              color={colors.color}
-              style={styles.featureIcon}
-            />
-            <Text style={[styles.featureLabel, {color: colors.color}]}>
-              {feature}
-            </Text>
-            <TextInput
-              style={[styles.featureInput, {color: colors.color}]}
-              placeholderTextColor={colors.secondaryColor}
-            />
-          </View>
-        ))} */}
+        />     
 
         {/* Facilities & Services */}
         <Text style={[styles.label, {color: colors.color}]}>
